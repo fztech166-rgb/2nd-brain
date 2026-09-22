@@ -1,0 +1,17 @@
+{
+  "name": "Second Brain",
+  "short_name": "2nd Brain",
+  "description": "Student productivity PWA — notes, AI explain, syllabus, focus, prayer, tasks.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#faf8ff",
+  "theme_color": "#0059ba",
+  "orientation": "portrait",
+  "lang": "bn-BD",
+  "icons": [
+    { "src": "assets/logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "assets/second-brain-logo-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/second-brain-logo-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

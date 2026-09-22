@@ -1,0 +1,13 @@
+{
+  "name": "second-brain",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Second Brain PWA + question-bank pipeline",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "puppeteer-core": "^25.6.0"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "^1.18.23"
+  }
+}

@@ -1,0 +1,2404 @@
+﻿<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://challenges.cloudflare.com https://www.youtube.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https:; frame-src 'self' https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://www.dailymotion.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin"/>
+<meta http-equiv="Permissions-Policy" content="camera=(), geolocation=(), payment=(), usb=(), interest-cohort=()"/>
+<meta name="theme-color" content="#faf8ff"/>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin/>
+<link rel="dns-prefetch" href="https://www.gstatic.com"/>
+<link rel="dns-prefetch" href="https://fonts.googleapis.com"/>
+<link rel="dns-prefetch" href="https://fonts.gstatic.com"/>
+<link rel="modulepreload" href="js/app.js"/>
+<link rel="modulepreload" href="js/store.js"/>
+<link rel="modulepreload" href="js/backend-init.js"/>
+<title>Second Brain</title>
+<link rel="manifest" href="manifest.webmanifest"/>
+<link rel="icon" href="assets/logo.svg"/>
+<link rel="apple-touch-icon" href="assets/icon-192.png.svg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<!-- Non-render-blocking fonts: if the device is OFFLINE the page no longer
+     waits for Google Fonts — it paints with system fallbacks instantly. -->
+<link rel="preload" as="style"
+  href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap"/>
+<link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap"
+  media="print" onload="this.media='all'"/>
+<noscript>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap"/>
+</noscript>
+<link rel="stylesheet" href="css/base.css?v=5"/>
+<link rel="stylesheet" href="css/components.css?v=5"/>
+<link rel="stylesheet" href="css/auth.css?v=5"/>
+<link rel="stylesheet" href="css/dashboard.css?v=5"/>
+<link rel="stylesheet" href="css/notes.css?v=5"/>
+<link rel="stylesheet" href="css/prayer.css?v=5"/>
+<link rel="stylesheet" href="css/focus.css?v=5"/>
+<link rel="stylesheet" href="css/syllabus.css?v=5"/>
+  <link rel="stylesheet" href="css/settings-ui.css?v=5"/>
+<link rel="stylesheet" href="css/chat.css?v=5"/>
+<link rel="stylesheet" href="css/saas.css?v=5"/>
+<link rel="stylesheet" href="css/social.css?v=5"/>
+<link rel="stylesheet" href="css/mobile-ui.css?v=5"/>
+<link rel="stylesheet" href="css/ux.css?v=5"/>
+<link rel="stylesheet" href="css/mind-map.css?v=5"/>
+<link rel="stylesheet" href="css/calendar.css?v=5"/>
+<link rel="stylesheet" href="css/responsive.css?v=5"/>
+<link rel="stylesheet" href="css/perf.css?v=5"/>
+<link rel="stylesheet" href="css/question-bank.css?v=5"/>
+<link rel="stylesheet" href="css/knowledge-duels.css?v=5"/>
+<link rel="stylesheet" href="css/revision-race.css?v=5"/>
+<link rel="stylesheet" href="css/target-race.css?v=5"/>
+<link rel="stylesheet" href="css/study-buddy.css?v=5"/>
+<link rel="stylesheet" href="css/mobile-fixes.css?v=5"/>
+<link rel="stylesheet" href="css/projects.css?v=1"/>
+<link rel="stylesheet" href="css/search.css?v=1"/>
+<link rel="stylesheet" href="css/prompt-templates.css?v=1"/>
+<link rel="stylesheet" href="css/usage-stats.css?v=1"/>
+<link rel="stylesheet" href="css/folders.css?v=1"/>
+<link rel="stylesheet" href="css/files.css?v=1"/>
+<link rel="stylesheet" href="css/checkout.css?v=1"/>
+<link rel="stylesheet" href="css/home-responsive.css?v=1"/>
+</head>
+<body class="app-loading">
+
+<a class="skip-link" href="#main-content" data-i18n-key="skipToContent">Skip to content</a>
+<div id="sb-aria-live" class="visually-hidden" aria-live="polite" role="status"></div>
+
+<!-- Inline icon sprite - fetched once, cached forever -->
+<div id="svg-host" hidden></div>
+<script>
+  // Inject the icon sprite into the DOM so <use href="assets/icons.svg#..."> works
+  // without an extra HTTP round-trip per icon. The file is cached by the SW.
+  fetch('assets/icons.svg').then(r => r.text()).then(t => {
+    const host = document.getElementById('svg-host');
+    if(host) host.innerHTML = t;
+  }).catch(()=>{});
+</script>
+
+<!-- Offline badge (hidden by default) -->
+<div id="offline-badge" class="offline-badge"></div>
+
+<!-- Loading skeleton -->
+<div id="app-skeleton" class="app-skeleton" aria-label="Loading Second Brain">
+  <div class="app-skeleton-card">
+    <div class="app-skeleton-logo-wrap">
+      <img class="app-skeleton-logo" src="assets/logo.svg" alt="Second Brain logo"/>
+    </div>
+    <div class="app-skeleton-progress" aria-hidden="true"><span></span></div>
+    <div class="app-skeleton-text">Loading Second Brain...</div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div id="toast-container" class="toast-container"></div>
+
+<!-- ============== AUTH GATE ============== -->
+<div id="auth-gate" class="auth-gate show">
+  <div class="auth-card">
+    <aside class="auth-brand">
+      <div class="auth-brand-icon" data-brand-logo><img src="assets/logo.svg" alt="Second Brain"/></div>
+      <h1 id="brand-app-name">Second Brain</h1>
+      <p id="brand-tagline" data-i18n-key="brandTagline">Study smarter with notes, focus timer, and revision planning all in one place. Securely sign in and customize your workspace.</p>
+      <button type="button" class="lang-toggle-btn" data-lang-toggle style="margin-top:8px;align-self:flex-start"><span class="lang-toggle-text">Bangla</span></button>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+        <span class="badge"><svg class="ico sm"><use href="assets/icons.svg#i-shield"/></svg> <span data-i18n-key="brandBadgePrivacy">Per-user privacy</span></span>
+        <span class="badge"><svg class="ico sm"><use href="assets/icons.svg#i-wifi-off"/></svg> <span data-i18n-key="brandBadgeOffline">Offline-first</span></span>
+        <span class="badge"><svg class="ico sm"><use href="assets/icons.svg#i-sparkles"/></svg> <span data-i18n-key="brandBadgeSmart">Smart Practice</span></span>
+      </div>
+    </aside>
+    <div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="login-tab" data-i18n-key="loginTab">Login</button>
+        <button class="auth-tab" id="register-tab" data-i18n-key="registerTab">Register</button>
+      </div>
+
+      <!-- Login -->
+      <form id="login-form" class="auth-form active" autocomplete="on">
+        <div class="form-group">
+          <label data-i18n-key="authEmailLabel">Email</label>
+          <input type="email" id="login-email" required placeholder="you@example.com" data-i18n-placeholder="loginEmailPlaceholder" autocomplete="email"/>
+        </div>
+        <div class="form-group">
+          <label data-i18n-key="authPasswordLabel">Password</label>
+          <div class="input-with-action">
+            <input type="password" id="login-password" required minlength="8" autocomplete="current-password"/>
+            <button type="button" class="input-action" data-toggle-pw="login-password"><svg class="ico"><use href="assets/icons.svg#i-eye"/></svg></button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg">
+          <svg class="ico"><use href="assets/icons.svg#i-logout" style="transform:scaleX(-1)"/></svg> <span data-i18n-key="loginButton">Login</span>
+        </button>
+        <button type="button" id="google-login-btn" class="btn btn-secondary btn-block btn-google" style="margin-top:8px">
+          <svg class="google-mark" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06L5.84 9.9C6.71 7.3 9.14 5.38 12 5.38z"/></svg> <span data-i18n-key="googleSignIn">Sign in with Google</span>
+        </button>
+        <button type="button" id="forgot-password-btn" class="btn btn-link btn-sm" style="display:block;margin:6px auto 0;background:none;color:var(--accent2);border:0;cursor:pointer;font-size:.82rem" data-i18n-key="forgotPassword">Forgot password?</button>
+        <p class="auth-help" data-i18n-key="authHelpLogin">If you already have an account, sign in with email/password or Google. New here? Register now.</p>
+        <p class="secure-auth-note"><svg class="ico sm"><use href="assets/icons.svg#i-shield"/></svg> <span data-i18n-key="secureAuthNote">Your password is never stored in plain text outside this device. On public/shared devices, log out after use.</span></p>
+      </form>
+
+      <!-- Register -->
+      <form id="register-form" class="auth-form" autocomplete="on">
+        <div id="refer-hint" class="refer-hint" style="display:none"></div>
+        <div class="form-group">
+          <label data-i18n-key="authFullNameLabel">Full Name</label>
+          <input type="text" id="reg-name" required placeholder="Your name" data-i18n-placeholder="regNamePlaceholder"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label data-i18n-key="authInstitutionNameLabel">Institution Name</label>
+            <select id="reg-institution-select" data-school-select required></select>
+            <input type="text" id="reg-institution" hidden/>
+            <div class="form-row">
+              <div class="form-group"><label data-i18n-key="authDistrictLabel">District</label><select id="reg-district" required><option value="">— Select District —</option></select></div>
+              <div class="form-group"><label data-i18n-key="authUpazilaLabel">Upazila / City</label><select id="reg-upazila" required><option value="">— Select Upazila —</option></select></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label data-i18n-key="authClassLabel">Class / Level</label>
+            <select id="reg-class" required></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label data-i18n-key="authEmailLabel">Email</label>
+          <input type="email" id="reg-email" required placeholder="you@example.com" data-i18n-placeholder="regEmailPlaceholder" autocomplete="email"/>
+        </div>
+        <div class="form-group">
+          <label data-i18n-key="authUniqueUserIdLabel">Unique User ID</label>
+          <input type="text" id="reg-user-id" required placeholder="yourname123" data-i18n-placeholder="regUserIdPlaceholder" autocomplete="username"/>
+          <p class="mini-note" data-i18n-key="authUserIdHint">Letters, numbers, dot, dash, underscore only. This ID must be unique.</p>
+        </div>
+        <div class="form-group">
+          <label data-i18n-key="authReferralLabel">Referral code (optional)</label>
+          <input type="text" id="reg-referral" placeholder="ABCD1234" data-i18n-placeholder="regReferralPlaceholder" style="text-transform:uppercase"/>
+          <p class="mini-note" data-i18n-key="regReferralHint">Enter a friend&rsquo;s referral code here if you have one.</p>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label data-i18n-key="authPasswordLabel">Password</label>
+            <div class="input-with-action">
+              <input type="password" id="reg-password" required minlength="8" autocomplete="new-password"/>
+              <button type="button" class="input-action" data-toggle-pw="reg-password"><svg class="ico"><use href="assets/icons.svg#i-eye"/></svg></button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label data-i18n-key="authReligionLabel">Religion</label>
+            <select id="reg-religion">
+              <option value="islam">Islam</option>
+              <option value="hindu">Hindu</option>
+              <option value="christian">Christian</option>
+              <option value="buddhist">Buddhist</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label data-i18n-key="authParentInfoLabel">Parent / Guardian Information</label>
+          <div class="form-row">
+            <div class="form-group"><label data-i18n-key="authParentNameLabel">Parent Name</label><input id="reg-parent-name" placeholder="Father / Mother name" data-i18n-placeholder="regParentNamePlaceholder"/></div>
+            <div class="form-group"><label data-i18n-key="authParentPhoneLabel">Parent Phone</label><input id="reg-parent-phone" type="tel" placeholder="01XXXXXXXXX" data-i18n-placeholder="regParentPhonePlaceholder"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label data-i18n-key="authParentRelationLabel">Relation</label>
+              <select id="reg-parent-relation">
+                <option value="father">Father</option>
+                <option value="mother">Mother</option>
+                <option value="guardian">Guardian</option>
+              </select>
+            </div>
+            <div class="form-group"><label data-i18n-key="authParentOccupationLabel">Occupation</label><input id="reg-parent-occupation" placeholder="e.g. Teacher" data-i18n-placeholder="regParentOccupationPlaceholder"/></div>
+          </div>
+          <p class="mini-note" data-i18n-key="authParentNote">Your parent's phone may be used for important notifications. Admin may verify it.</p>
+        </div>
+        <div id="reg-school-request-block" class="school-request-block" style="display:none">
+          <div class="mini-note" style="margin-bottom:8px" data-i18n-key="schoolRequestHelp">Your institution is not on the list? Submit a request and we will add it after approval.</div>
+          <div class="form-row">
+            <div class="form-group"><label data-i18n-key="authInstitutionRequestNameLabel">Institution name</label><input id="reg-school-request-name" placeholder="School / College / University" data-i18n-placeholder="regSchoolRequestNamePlaceholder"/></div>
+            <div class="form-group"><label data-i18n-key="authInstitutionRequestDistrictLabel">District (optional)</label><select id="reg-school-request-district"><option value="">— Select —</option></select></div>
+            <div class="form-group"><label data-i18n-key="authInstitutionRequestUpazilaLabel">Upazila / City (optional)</label><select id="reg-school-request-upazila"><option value="">— Select —</option></select></div>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" id="reg-school-request-submit"><svg class="ico sm"><use href="assets/icons.svg#i-send"/></svg> <span data-i18n-key="submitInstitutionRequest">Submit institution request</span></button>
+          <p id="reg-school-request-status" class="mini-note" style="display:none;color:var(--accent3);margin-top:6px"></p>
+        </div>
+        <div id="turnstile-mount" class="turnstile-mount" style="margin:8px 0"></div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg">
+          <svg class="ico"><use href="assets/icons.svg#i-add"/></svg> <span data-i18n-key="registerButton">Create my account</span>
+        </button>
+        <button type="button" id="google-register-btn" class="btn btn-secondary btn-block btn-google" style="margin-top:8px">
+          <svg class="google-mark" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06L5.84 9.9C6.71 7.3 9.14 5.38 12 5.38z"/></svg> <span data-i18n-key="googleSignUp">Sign up with Google</span>
+        </button>
+        <p class="auth-help" data-i18n-key="authHelpRegister">Create your account once. After that, your workspace will be ready immediately when you open the app on this device.</p>
+      </form>
+      <div id="auth-error" class="auth-error"></div>
+      <div id="gate-err" class="auth-error"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== APP ============== -->
+<div class="app-container">
+  <header>
+    <button class="btn-icon menu-toggle" id="menu-toggle-btn" data-i18n-title="menuTitle" data-i18n-aria-label="menuAriaLabel" title="Menu" aria-label="Open menu"><svg class="ico"><use href="assets/icons.svg#i-tasks"/></svg></button>
+    <a href="#" class="logo"><span class="logo-img" data-brand-logo><img src="assets/logo.svg" alt="Second Brain"/></span><span id="app-name-header" data-i18n-key="appNameHeader">Second Brain</span></a>
+
+    <div class="header-center">
+      <div class="search-bar" style="width:min(420px,100%)">
+        <svg class="ico"><use href="assets/icons.svg#i-search"/></svg>
+        <input class="search-input" id="search-input" placeholder="Search notes, topics..." data-i18n-placeholder="searchPlaceholder"/>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="lang-toggle-btn" data-lang-toggle><span class="lang-toggle-text">Bangla</span></button>
+      <button class="btn-icon" id="theme-toggle-btn" data-i18n-title="themeTitle" data-i18n-aria-label="themeAriaLabel" title="Theme" aria-label="Toggle theme"><svg class="ico"><use href="assets/icons.svg#i-moon"/></svg></button>
+      <button class="btn-icon" id="logout-btn" data-i18n-title="logoutTitle" data-i18n-aria-label="logoutAriaLabel" title="Logout" aria-label="Log out"><svg class="ico"><use href="assets/icons.svg#i-logout"/></svg></button>
+      <button type="button" class="header-focus-pill" id="header-focus-pill" data-header-focus title="Focus timer — tap to start / stop" aria-label="Focus timer">
+        <svg class="ico sm"><use href="assets/icons.svg#i-focus"/></svg>
+        <span class="hfp-time" id="header-focus-time">00</span>
+        <span class="hfp-fire" id="header-fire-badge" title="Daily streak" style="display:none"><b id="header-streak-count">0</b></span>
+      </button>
+      <div class="notif-wrap">
+        <button type="button" class="btn-icon" id="notif-bell" title="Notifications" aria-label="Notifications"><svg class="ico"><use href="assets/icons.svg#i-bell"/></svg><span class="notif-badge" id="notif-badge" style="display:none">0</span></button>
+        <div class="notif-panel" id="notif-panel">
+          <div class="notif-panel-head">Notifications</div>
+          <div class="notif-list" id="notif-list"></div>
+        </div>
+      </div>
+      <div class="user-avatar" id="user-avatar" data-user-avatar>S</div>
+      <!-- Management panel button removed from User Panel. -->
+    </div>
+  </header>
+
+  <div class="main-layout">
+    <!-- ===== Sidebar ===== -->
+    <nav class="sidebar">
+      <div class="sidebar-section-label" data-i18n-key="workspaceLabel">Workspace</div>
+      <div class="nav-item active" data-section="dashboard"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-dashboard"/></svg></span><span data-i18n-key="navDashboard">Dashboard</span></div>
+      <div class="nav-item" data-section="notes" data-feature="notes"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-notes"/></svg></span><span data-i18n-key="navAllNotes">All Notes</span><span class="nav-badge" id="sidebar-notes-count">0</span></div>
+      <div class="nav-item" data-section="revision" data-feature="revision"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-revision"/></svg></span><span data-i18n-key="navRevision">Revision</span><span class="nav-badge warn" id="sidebar-revision-count">0</span></div>
+      <div class="nav-item" data-section="add" data-feature="addNote"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-add"/></svg></span><span data-i18n-key="navAddNote">Add Note</span></div>
+
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section-label" data-i18n-key="productivityLabel">Productivity</div>
+      <div class="nav-item" data-section="prayer" data-feature="prayer"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-prayer"/></svg></span><span data-i18n-key="navPrayerTimes">Prayer Times</span></div>
+      <div class="nav-item" data-section="focus" data-feature="focus"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-focus"/></svg></span><span data-i18n-key="navFocusTimer">Focus Timer</span></div>
+      <div class="nav-item" data-section="syllabus" data-feature="syllabus"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-syllabus"/></svg></span><span data-i18n-key="navSyllabusAi">Syllabus + AI</span></div>
+      <div class="nav-item" data-section="practice"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-graduation"/></svg></span><span data-i18n-key="navPracticeCenter">Practice Center</span></div>
+      <div class="nav-item" data-section="tasks" data-feature="tasks"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-tasks"/></svg></span><span data-i18n-key="navTasks">Tasks</span></div>
+      <div class="nav-item" data-section="projects"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-folder"/></svg></span><span>Projects</span><span class="nav-badge" id="sidebar-projects-count">0</span></div>
+<div class="nav-item" data-section="files"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-paper"/></svg></span><span>Files</span><span class="nav-badge" id="sidebar-files-count">0</span></div>
+      <div class="nav-item" data-section="courses" data-feature="courses"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-play"/></svg></span><span data-i18n-key="navYoutubeCourses">YouTube Courses</span></div>
+
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section-label" data-i18n-key="subjectsLabel">Subjects</div>
+      <div id="sidebar-subjects">
+        <div class="subject-tag active" data-filter-all="1">
+          <div class="tag-dot" style="background:var(--text2)"></div><span data-i18n-key="allSubjects">All Subjects</span><span class="tag-count" id="count-all">0</span>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section-label">Folders <button class="btn-icon" id="add-folder-btn" title="New folder" style="margin-left:auto"><svg class="ico sm"><use href="assets/icons.svg#i-add"/></svg></button></div>
+      <div id="sidebar-folders"></div>
+
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section-label">Learning</div>
+      <div class="nav-item" data-section="resources" data-feature="resources"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-book-open"/></svg></span><span>Resources</span></div>
+      <div class="nav-item" data-section="pinned-sites" data-feature="pinnedSites"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-link"/></svg></span><span>Pinned Sites</span></div>
+      <div class="nav-item" data-section="mindmap"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-mindmap"/></svg></span><span data-i18n-key="navMindMap">AI Mind Map</span></div>
+      <div class="nav-item" data-section="calendar"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-calendar"/></svg></span><span data-i18n-key="navCalendar">Calendar</span></div>
+
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section-label" data-i18n-key="socialLabel">Social</div>
+      <div class="nav-item" data-section="leaderboard"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-flame"/></svg></span><span data-i18n-key="navLeaderboard">Leaderboard</span></div>
+      <div class="nav-item" data-section="class-chat"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-megaphone"/></svg></span><span data-i18n-key="navClassCommunity">Class Community</span></div>
+      <div class="nav-item" data-section="friends"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-users"/></svg></span><span data-i18n-key="navFriends">Friends</span></div>
+      <div class="nav-item" data-section="dm"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-chat"/></svg></span><span data-i18n-key="navMessages">Messages</span></div>
+      <div class="nav-item" data-section="quiz"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-sparkles"/></svg></span><span data-i18n-key="navQuizzes">Quizzes</span></div>
+      <div class="nav-item" data-section="question-bank" data-feature="questionBank"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-book-open"/></svg></span><span data-i18n-key="navQuestionBank">Question Bank</span></div>
+      <div class="nav-item" data-section="class-qb"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-paper"/></svg></span><span data-i18n-key="navClassQb">Class Question Bank</span></div>
+      <div class="nav-item" data-section="board-pdfs"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-save"/></svg></span><span>Board PDFs</span></div>
+      <div class="nav-item" data-section="shared-notes"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-share"/></svg></span><span data-i18n-key="navSharedNotes">Shared Notes</span></div>
+
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section-label" data-i18n-key="competitionsLabel">Competitions</div>
+      <div class="nav-item" data-section="duels" data-feature="duels"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-trophy"/></svg></span><span>Knowledge Duels</span></div>
+      <div class="nav-item" data-section="revision-race" data-feature="revisionRace"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-flame"/></svg></span><span>Revision Race</span></div>
+      <div class="nav-item" data-section="target-race" data-feature="targetRace"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-target"/></svg></span><span>Daily Target Race</span></div>
+      <div class="nav-item" data-section="study-buddy" data-feature="studyBuddy"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-users"/></svg></span><span>Study Buddy</span></div>
+
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section-label" data-i18n-key="accountLabel">Account</div>
+      <div class="nav-item" data-section="refer"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-gift"/></svg></span><span data-i18n-key="navReferEarn">Refer &amp; Earn</span></div>
+      <div class="nav-item" data-section="community"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-users"/></svg></span><span data-i18n-key="navCommunity">Community</span></div>
+      <div class="nav-item" data-section="payment"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-credit"/></svg></span><span data-i18n-key="navSubscribe">Subscribe</span></div>
+      <div class="nav-item" id="open-settings-btn" data-section="settings"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-settings"/></svg></span><span data-i18n-key="navSettings">Settings</span></div>
+      <div class="nav-item" data-section="help"><span class="nav-icon"><svg class="ico"><use href="assets/icons.svg#i-help"/></svg></span><span data-i18n-key="navHelpSupport">Help &amp; Support</span></div>
+    </nav>
+
+    <main class="content" id="main-content" tabindex="-1">
+      <div class="top-status">
+        <div id="trial-banner" class="trial-banner" style="display:none"></div>
+        <div class="top-task-widgets">
+          <div id="daily-target-widget" class="daily-target-header">
+            <div class="daily-target-top">
+              <span class="daily-target-label">🎯 <span id="daily-target-current">0m</span> / <span id="daily-target-value">4h</span></span>
+              <span class="daily-target-pct" id="daily-target-pct">0%</span>
+            </div>
+            <div class="daily-target-bar">
+              <div class="daily-target-fill" id="daily-target-progress" style="width:0%"></div>
+            </div>
+            <select id="daily-target-select" class="daily-target-select">
+              <option value="120">2h</option>
+              <option value="180">3h</option>
+              <option value="240" selected>4h</option>
+              <option value="360">6h</option>
+              <option value="480">8h</option>
+              <option value="720">12h</option>
+            </select>
+            <span class="daily-target-lock-note" id="daily-target-lock-note" style="display:none"></span>
+          </div>
+          <div id="focus-header-widget" class="focus-timer-header">
+            <span class="focus-time-pill">
+              <svg class="ico sm"><use href="assets/icons.svg#i-clock"/></svg>
+              <span class="focus-time-display" id="focus-header-time">00:00:00</span>
+            </span>
+            <button class="focus-toggle" id="focus-toggle-btn"><svg class="ico"><use href="assets/icons.svg#i-play"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <div id="notice-stack" class="notice-stack"></div>
+
+      <!-- Floating focus timer (visible on every section while active) -->
+      <div id="brain-focus-floater" aria-hidden="true">
+        <span class="pulse"></span>
+        <span class="ft" id="brain-focus-floater-time">00:00:00</span>
+        <span class="floater-actions">
+          <button id="brain-focus-floater-stop" aria-label="Stop focus" title="Stop focus"><svg class="ico sm"><use href="assets/icons.svg#i-pause"/></svg></button>
+          <button id="brain-focus-floater-close" aria-label="Hide floating timer" title="Hide floating timer">&times;</button>
+        </span>
+      </div>
+
+      <!-- Morning popup — once per day: streak status + daily focus tasks -->
+      <div class="modal-overlay" id="morning-popup-modal">
+        <div class="modal-card mp-card">
+          <div class="modal-header">
+            <div class="modal-title" id="mp-greeting">🌅 Good Morning!</div>
+            <button class="modal-close" data-mp-close>&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="mp-streak" id="mp-streak">🔥 Ready for a new streak day?</div>
+            <div class="mp-badges" id="mp-badges">🏅 First badge after 21 straight days</div>
+            <div class="mp-lock-note" id="mp-lock-note" style="display:none"></div>
+            <div class="mp-target-box">
+              <div class="mp-target-head">
+                <span class="mp-target-label">🎯 <b id="mp-current">0m</b> / <span id="mp-target">4h</span></span>
+                <span class="mp-target-pct" id="mp-pct">0%</span>
+              </div>
+              <div class="daily-target-bar"><div class="daily-target-fill" id="mp-progress" style="width:0%"></div></div>
+            </div>
+            <div class="mp-tasks">
+              <div class="mp-tasks-title">📋 Today's focus tasks</div>
+              <ul id="mp-task-list"></ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" data-mp-close>Later</button>
+            <button class="btn btn-primary" id="mp-focus">🚀 Start Focus</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Break prompt — appears after focus threshold reached -->
+      <div class="modal-overlay" id="break-prompt-modal">
+        <div class="modal-card" style="max-width:400px;text-align:center">
+          <div class="modal-header"><div class="modal-title">☕ Time for a Break!</div></div>
+          <div class="modal-body">
+            <div id="break-prompt-msg" style="font-size:.92rem;color:var(--text2);margin-bottom:16px"></div>
+            <div class="break-emoji">🧘</div>
+          </div>
+          <div class="modal-footer" style="justify-content:center">
+            <button class="btn btn-ghost" id="break-decline">Skip</button>
+            <button class="btn btn-primary" id="break-accept">☕ Start Break</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Break overlay — shows during break countdown -->
+      <div class="break-overlay" id="break-overlay" style="display:none">
+        <div class="break-card">
+          <div class="break-emoji-large">🧘</div>
+          <div class="break-title">Break Time</div>
+          <div class="break-countdown" id="break-remaining">15:00</div>
+          <div class="break-sub">Timer keeps running — break counts as focus!</div>
+          <button class="btn btn-primary" id="break-end">End Break Early</button>
+        </div>
+      </div>
+
+      <!-- ===== DASHBOARD ===== -->
+      <section id="view-dashboard" class="section-view active">
+        <div class="brain-hero">
+          <div class="brain-hero-orb"><svg class="ico"><use href="assets/icons.svg#i-brain"/></svg></div>
+          <div class="brain-info">
+            <div class="brain-greeting"><span data-i18n-key="welcomeBack">Welcome back,</span> <span id="brain-greet-name">Student</span>!</div>
+            <p class="brain-subtitle" data-i18n-key="brainSubtitle">Your second brain is awake. Take notes, schedule revisions, and let AI explain whatever feels hard.</p>
+            <div class="brain-stats-row">
+              <div class="brain-stat"><svg class="ico sm"><use href="assets/icons.svg#i-notes"/></svg> <strong id="brain-total">0</strong> <span data-i18n-key="notesWord">notes</span></div>
+              <div class="brain-stat"><svg class="ico sm"><use href="assets/icons.svg#i-revision"/></svg> <strong id="brain-due">0</strong> <span data-i18n-key="dueNow">due now</span></div>
+              <div class="brain-stat"><svg class="ico sm"><use href="assets/icons.svg#i-flame"/></svg> <span data-i18n-key="aiLabel">AI:</span> <strong id="brain-ai-count">0</strong></div>
+            </div>
+          </div>
+          <div class="brain-time-label" id="brain-time-label">&#9201; 00:00:00</div>
+        </div>
+
+        <div id="dashboard-banner" class="dashboard-banner" style="display:none">
+          <div class="dashboard-banner-copy">
+            <div class="dashboard-banner-kicker" id="dashboard-banner-kicker"></div>
+            <h2 id="dashboard-banner-title"></h2>
+            <p id="dashboard-banner-body"></p>
+            <a id="dashboard-banner-link" class="btn btn-primary btn-sm" href="#" target="_blank" rel="noopener" style="display:none"></a>
+          </div>
+          <img id="dashboard-banner-image" alt="" style="display:none"/>
+        </div>
+        <div class="stats-grid dashboard-stats-hidden" aria-hidden="true">
+          <div class="stat-card blue"><div class="stat-icon"><svg class="ico"><use href="assets/icons.svg#i-notes"/></svg></div><div class="stat-label"><span data-i18n-key="statTotalNotes">Total Notes</span></div><div class="stat-value blue" id="stat-total">0</div></div>
+          <div class="stat-card warn"><div class="stat-icon"><svg class="ico"><use href="assets/icons.svg#i-revision"/></svg></div><div class="stat-label"><span data-i18n-key="statNeedRevision">Need Revision</span></div><div class="stat-value warn" id="stat-revision">0</div></div>
+          <div class="stat-card green"><div class="stat-icon"><svg class="ico"><use href="assets/icons.svg#i-check"/></svg></div><div class="stat-label"><span data-i18n-key="statRevised">Revised</span></div><div class="stat-value green" id="stat-revised">0</div></div>
+          <div class="stat-card purple"><div class="stat-icon"><svg class="ico"><use href="assets/icons.svg#i-ai"/></svg></div><div class="stat-label"><span data-i18n-key="statAiUsed">AI Used</span></div><div class="stat-value purple" id="stat-ai">0</div></div>
+        </div>
+
+        <div class="revision-panel" id="revision-panel" style="margin-top:18px">
+          <div class="revision-header">
+            <svg class="ico" style="color:var(--warn)"><use href="assets/icons.svg#i-warning"/></svg>
+            <div class="revision-title" data-i18n-key="revisionDue">Revision Due</div>
+            <button class="btn btn-primary btn-sm" id="start-revision-session-btn"><svg class="ico sm"><use href="assets/icons.svg#i-play"/></svg> <span data-i18n-key="startRevision">Start Revision</span></button>
+            <button class="btn btn-secondary btn-sm" data-section="revision"><span data-i18n-key="allArrow">All &rarr;</span></button>
+            <span class="badge" style="color:var(--warn)" id="revision-panel-count">0 <span data-i18n-key="revisionPanelNotes">notes</span></span>
+          </div>
+          <div class="revision-list" id="revision-list"></div>
+        </div>
+
+        <div class="section-header" style="margin-top:18px"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-notes"/></svg> <span data-i18n-key="recentNotes">Recent Notes</span></div></div>
+        <div class="notes-grid" id="recent-notes-grid"></div>
+
+        <!-- ===== Usage Stats Widget ===== -->
+        <div class="section-header" style="margin-top:18px"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-chart"/></svg> <span>Your Statistics</span></div></div>
+        <div id="usage-stats-widget"></div>
+
+        <!-- ===== Quick Task Add (dashboard) ===== -->
+        <div class="dashboard-task-shortcut">
+          <svg class="ico" style="color:var(--warn);flex-shrink:0"><use href="assets/icons.svg#i-tasks"/></svg>
+          <input id="quick-task-title" placeholder="Write a quick task..." data-i18n-placeholder="quickTaskPlaceholder" style="flex:1"/>
+          <input type="time" id="quick-task-time" class="task-time-input"/>
+          <button class="btn btn-primary btn-sm" id="quick-task-btn"><svg class="ico sm"><use href="assets/icons.svg#i-add"/></svg> <span data-i18n-key="addTask">Add Task</span></button>
+        </div>
+
+        <!-- ===== Quick Actions Bar ===== -->
+        <div class="quick-actions-bar">
+          <button class="quick-action-btn" data-quick-action="add-note"><svg class="ico"><use href="assets/icons.svg#i-add"/></svg> New Note</button>
+          <button class="quick-action-btn" data-quick-action="add-task"><svg class="ico"><use href="assets/icons.svg#i-tasks"/></svg> Add Task</button>
+          <button class="quick-action-btn" data-quick-action="add-project"><svg class="ico"><use href="assets/icons.svg#i-folder"/></svg> New Project</button>
+          <button class="quick-action-btn" data-quick-action="upload-file"><svg class="ico"><use href="assets/icons.svg#i-paper"/></svg> Upload File</button>
+          <button class="quick-action-btn" data-quick-action="ask-ai"><svg class="ico"><use href="assets/icons.svg#i-ai"/></svg> Ask AI</button>
+          <button class="quick-action-btn" data-quick-action="focus"><svg class="ico"><use href="assets/icons.svg#i-focus"/></svg> Start Focus</button>
+          <button class="quick-action-btn" data-quick-action="templates"><svg class="ico"><use href="assets/icons.svg#i-sparkles"/></svg> Templates</button>
+        </div>
+
+        <div class="dashboard-widget-grid">
+          <div class="preview-card dashboard-task-widget">
+            <div class="preview-head">
+              <div class="preview-title"><svg class="ico"><use href="assets/icons.svg#i-tasks"/></svg> <span data-i18n-key="todaysTasks">Today&rsquo;s Tasks</span></div>
+              <button class="btn btn-sm btn-secondary" data-section="tasks"><span data-i18n-key="manage">Manage</span></button>
+            </div>
+            <div class="preview-list" id="dashboard-task-list"><div class="preview-empty" data-i18n-key="noTaskYet">No task yet</div></div>
+          </div>
+          <div class="preview-card dashboard-project-widget">
+            <div class="preview-head">
+              <div class="preview-title"><svg class="ico"><use href="assets/icons.svg#i-folder"/></svg> <span>Active Projects</span></div>
+              <button class="btn btn-sm btn-secondary" data-section="projects"><span data-i18n-key="manage">Manage</span></button>
+            </div>
+            <div class="preview-list" id="dashboard-project-list"><div class="preview-empty">No active projects</div></div>
+          </div>
+          <div class="preview-card dashboard-leaderboard-widget">
+            <div class="preview-head">
+              <div class="preview-title"><svg class="ico"><use href="assets/icons.svg#i-flame"/></svg> <span data-i18n-key="topFocus">Top Focus</span></div>
+              <button class="btn btn-sm btn-secondary" data-section="leaderboard"><span data-i18n-key="fullRank">Full Rank</span></button>
+            </div>
+            <div class="preview-list" id="dashboard-leaderboard-list"><div class="preview-empty" data-i18n-key="noFocusDataYet">No focus data yet</div></div>
+          </div>
+          <div class="preview-card dashboard-prayer-widget" data-feature="prayer">
+            <div class="preview-head">
+              <div class="preview-title"><svg class="ico"><use href="assets/icons.svg#i-prayer"/></svg> <span id="dash-prayer-name" data-i18n-key="nextPrayer">Next prayer</span></div>
+              <button class="btn btn-sm btn-secondary" data-section="prayer"><span data-i18n-key="open">Open</span></button>
+            </div>
+            <div class="dash-prayer-body">
+              <div class="dash-prayer-time" id="dash-prayer-time">--:--</div>
+              <div class="dash-prayer-countdown" id="dash-prayer-countdown">&#8987; --:--:--</div>
+              <div class="dash-prayer-loc" id="dash-prayer-loc">&mdash;</div>
+            </div>
+          </div>
+          <div class="preview-card dashboard-qbclass-widget" id="qbclass-widget" style="display:none">
+            <div class="preview-head">
+              <div class="preview-title"><svg class="ico"><use href="assets/icons.svg#i-paper"/></svg> <span data-i18n-key="qbClassWidgetTitle">Your Class Resources</span></div>
+              <button class="btn btn-sm btn-secondary" data-section="class-qb"><span data-i18n-key="open">Open</span></button>
+            </div>
+            <div class="preview-list" id="qbclass-widget-body"></div>
+          </div>
+        </div>
+
+        <!-- ===== Community + DM Preview (dashboard) ===== -->
+        <div class="preview-grid" id="dashboard-messages">
+          <div class="preview-card" id="preview-community">
+            <div class="preview-head">
+              <div class="preview-title"><svg class="ico"><use href="assets/icons.svg#i-users"/></svg> <span data-i18n-key="classCommunity">Class Community</span></div>
+              <button class="btn btn-sm btn-secondary" data-section="class-chat"><span data-i18n-key="open">Open</span></button>
+            </div>
+            <div class="preview-list" id="preview-community-list"><div class="preview-empty" data-i18n-key="noCommunityMsg">No community message yet</div></div>
+          </div>
+          <div class="preview-card" id="preview-dm">
+            <div class="preview-head">
+              <div class="preview-title"><svg class="ico"><use href="assets/icons.svg#i-chat"/></svg> <span data-i18n-key="friendMessages">Friend Messages</span></div>
+              <button class="btn btn-sm btn-secondary" data-section="dm"><span data-i18n-key="open">Open</span></button>
+            </div>
+            <div class="preview-list" id="preview-dm-list"><div class="preview-empty" data-i18n-key="noFriendDm">No friend DM</div></div>
+          </div>
+        </div>
+
+        <!-- ===== More Features ===== -->
+        <div class="section-header" style="margin-top:18px">
+          <div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-sparkles"/></svg> <span data-i18n-key="moreFeatures">More Features</span></div>
+          <button class="btn btn-secondary btn-sm more-features-toggle" id="more-features-toggle" type="button" title="More Features">
+            <svg class="ico"><use href="assets/icons.svg#i-dashboard"/></svg><span data-i18n-key="more">More</span>
+          </button>
+        </div>
+        <div class="feature-grid" id="feature-grid"></div>
+      </section>
+
+      <!-- ===== ALL NOTES ===== -->
+      <section id="view-notes" class="section-view">
+        <div class="section-header">
+          <div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-notes"/></svg> <span data-i18n-key="allNotesTitle">All Notes</span></div>
+        </div>
+        <div class="filter-tabs" id="filter-tabs"></div>
+        <div id="notes-ai-area"></div>
+        <div class="notes-grid" id="all-notes-grid" style="margin-top:14px"></div>
+      </section>
+
+      <!-- ===== REVISION ===== -->
+      <section id="view-revision" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-revision"/></svg> <span data-i18n-key="revisionCenter">Revision Center</span></div></div>
+        <div id="revision-full-list"></div>
+      </section>
+
+      <!-- ===== ADD NOTE ===== -->
+      <section id="view-add" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-add"/></svg> <span data-i18n-key="addNewNote">Add a New Note</span></div></div>
+        <div class="card note-form-card" style="max-width:780px">
+          <div class="form-group">
+            <label data-i18n-key="title">Title</label>
+            <div class="note-input-wrap">
+              <input id="note-title" class="note-input" placeholder="Newton's Second Law of Motion" data-i18n-placeholder="noteTitlePh"/>
+              <button type="button" data-mic-btn data-mic-target="note-title" class="note-input-icon" title="Voice to text"><svg class="ico"><use href="assets/icons.svg#i-mic-off"/></svg></button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label data-i18n-key="subject">Subject</label>
+            <div class="note-input-wrap">
+              <select id="note-subject" class="note-input">
+                <option value="" data-i18n-text-key="chooseSubject">Choose subject</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" id="note-syllabus-pick-group">
+            <label><span data-i18n-key="linkedSyllabusChapter">Linked Syllabus Chapter</span> <small style="color:var(--text2);font-weight:400"><span data-i18n-key="optionalContextAi">(optional — context shown to AI)</span></small></label>
+            <div class="note-input-wrap">
+              <select id="note-syllabus-pick" class="note-input"><option value="" data-i18n-text-key="none">— None —</option></select>
+            </div>
+            <div id="note-syllabus-context" class="note-syllabus-context" style="display:none"></div>
+          </div>
+          <div class="form-group">
+            <label>Folder <small style="color:var(--text2);font-weight:400">(optional)</small></label>
+            <div class="note-input-wrap">
+              <select id="note-folder-pick" class="note-input"><option value="">— No folder —</option></select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label data-i18n-key="content">Content</label>
+            <div class="note-input-wrap note-textarea-wrap">
+              <textarea id="note-content" class="note-input" placeholder="Write your note... or press the mic and speak." data-i18n-placeholder="noteContentPh" rows="5"></textarea>
+              <div class="note-input-actions">
+                <button type="button" id="mic-btn" class="note-input-icon" title="Voice to text"><svg class="ico"><use href="assets/icons.svg#i-mic-off"/></svg></button>
+                <button type="button" class="note-input-icon" title="Upload file for text extraction" data-note-upload="note-content"><svg class="ico"><use href="assets/icons.svg#i-image"/></svg></button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label><span data-i18n-key="images">Images</span> <small style="color:var(--text2);font-weight:400"><span data-i18n-key="savedOnDevice">(saved on this device only — never uploaded)</span></small></label>
+            <div class="note-upload-area" id="note-image-upload-area">
+              <input type="file" id="note-image-input" accept="image/*" multiple hidden/>
+              <div class="note-upload-content">
+                <svg class="ico" style="width:28px;height:28px;color:var(--text3)"><use href="assets/icons.svg#i-add"/></svg>
+                <span>Tap to add images</span>
+              </div>
+              <div class="note-upload-progress" id="note-upload-progress" style="display:none">
+                <svg class="upload-circle" viewBox="0 0 36 36">
+                  <circle class="upload-circle-bg" cx="18" cy="18" r="15.9"/>
+                  <circle class="upload-circle-fill" cx="18" cy="18" r="15.9" id="upload-circle-fill"/>
+                </svg>
+              </div>
+            </div>
+            <div id="note-image-previews" class="note-img-previews"></div>
+          </div>
+          <div class="form-footer">
+            <button class="btn btn-secondary" id="clear-form-btn"><span data-i18n-key="clear">Clear</span></button>
+            <button class="btn btn-primary" id="save-btn"><svg class="ico"><use href="assets/icons.svg#i-save"/></svg> <span data-i18n-key="saveNote">Save Note</span></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== PRAYER ===== -->
+      <section id="view-prayer" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-prayer"/></svg> <span data-i18n-key="prayerTimes">Prayer Times</span></div></div>
+        <div class="prayer-countdown-main">
+          <div class="prayer-countdown-label"><span data-i18n-key="nextPrayerIn">Next prayer in</span></div>
+          <div class="prayer-countdown-val" id="prayer-countdown-val">--:--:--</div>
+          <div class="prayer-countdown-name" id="prayer-countdown-name">&mdash;</div>
+        </div>
+        <div class="prayer-grid" id="prayer-grid"></div>
+        <div class="prayer-location" id="prayer-location" data-i18n-key="loading">Loading...</div>
+        <div id="prayer-mini-widget" class="prayer-mini" style="margin-top:18px;max-width:300px">
+          <div class="prayer-mini-title"><svg class="ico"><use href="assets/icons.svg#i-prayer"/></svg> <span data-i18n-key="quickView">Quick view</span></div>
+          <div class="prayer-mini-next" id="prayer-mini-name">&mdash;</div>
+          <div class="prayer-mini-time" id="prayer-mini-time">&mdash;</div>
+          <div class="prayer-mini-countdown" id="prayer-mini-countdown">&mdash;</div>
+        </div>
+      </section>
+
+      <!-- ===== FOCUS ===== -->
+      <section id="view-focus" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-focus"/></svg> <span data-i18n-key="focusTimer">Focus Timer</span></div></div>
+        <div class="focus-section">
+          <div class="focus-card">
+            <div class="focus-ring"><div class="focus-ring-inner"><svg class="ico"><use href="assets/icons.svg#i-target"/></svg></div></div>
+            <div class="focus-big-timer" id="focus-big-timer">00:00:00</div>
+            <div class="focus-target-wrap">
+              <div class="focus-target-remaining" id="focus-target-remaining" hidden></div>
+              <div class="focus-target-track"><div class="focus-target-bar" id="focus-target-bar"></div></div>
+            </div>
+            <div class="focus-notes-box">
+              <label data-i18n-key="notesForSession">Notes for this session</label>
+              <textarea id="focus-session-note" placeholder="Studying Chapter 3 Physics..." data-i18n-placeholder="focusNotePh"></textarea>
+            </div>
+            <button id="focus-main-toggle" class="btn btn-primary btn-block btn-lg"><svg class="ico"><use href="assets/icons.svg#i-play"/></svg> <span data-i18n-key="startFocus">Start Focus</span></button>
+          </div>
+          <div class="focus-history">
+            <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-clock"/></svg> <span data-i18n-key="history">History</span></div>
+            <div id="focus-history-list" style="margin-top:10px"></div>
+          </div>
+        </div>
+
+        <!-- Focus Statistics Dashboard -->
+        <div class="focus-stats-section">
+          <div class="focus-stats-tabs">
+            <button class="focus-stat-tab active" data-period="daily">দৈনিক</button>
+            <button class="focus-stat-tab" data-period="monthly">মাসিক</button>
+            <button class="focus-stat-tab" data-period="yearly">বাৎসরিক</button>
+          </div>
+
+          <div class="focus-stats-grid">
+            <!-- Ring Chart -->
+            <div class="focus-stats-card">
+              <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-target"/></svg> <span id="focus-ring-title">আজকের সময়</span></div>
+              <div class="focus-ring-chart">
+                <div class="ring-container">
+                  <svg class="ring-svg" viewBox="0 0 120 120">
+                    <circle class="ring-bg" cx="60" cy="60" r="50"/>
+                    <circle class="ring-progress" id="focus-ring-progress" cx="60" cy="60" r="50"/>
+                  </svg>
+                  <div class="ring-center">
+                    <div class="ring-value" id="focus-ring-value">0h</div>
+                    <div class="ring-label" id="focus-ring-label">মোট সময়</div>
+                  </div>
+                </div>
+                <div class="ring-stats">
+                  <div class="ring-stat"><span class="ring-stat-dot" style="background:var(--accent)"></span><span id="ring-stat-focus">ফোকাস: 0h</span></div>
+                  <div class="ring-stat"><span class="ring-stat-dot" style="background:var(--text2)"></span><span id="ring-stat-target">লক্ষ্য: 8h</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bar Graph -->
+            <div class="focus-stats-card">
+              <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-chart"/></svg> <span id="focus-graph-title">সাপ্তাহিক গ্রাফ</span></div>
+              <div class="focus-bar-graph" id="focus-bar-graph">
+                <div class="bar-graph-y-axis">
+                  <span>8h</span><span>6h</span><span>4h</span><span>2h</span><span>0</span>
+                </div>
+                <div class="bar-graph-container" id="focus-bar-container"></div>
+                <div class="bar-graph-x-axis" id="focus-bar-labels"></div>
+              </div>
+            </div>
+
+            <!-- Date Picker & Session Details -->
+            <div class="focus-stats-card focus-stats-full">
+              <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-calendar"/></svg> <span>তারিখ নির্বাচন করুন</span></div>
+              <div class="focus-date-picker">
+                <input type="date" id="focus-date-select" class="focus-date-input"/>
+                <button class="btn btn-primary btn-sm" id="focus-date-load">লোড করুন</button>
+              </div>
+              <div id="focus-date-sessions" class="focus-date-sessions">
+                <div class="empty-state">
+                  <svg class="ico xl"><use href="assets/icons.svg#i-calendar"/></svg>
+                  <div class="empty-title">তারিখ নির্বাচন করুন</div>
+                  <div class="empty-text">নির্দিষ্ট দিনের সকল ডেটা দেখতে তারিখ সিলেক্ট করুন</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SYLLABUS + AI QUESTIONS ===== -->
+      <section id="view-syllabus" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-syllabus"/></svg> <span data-i18n-key="syllabusAi">Syllabus + AI Questions</span></div></div>
+
+<!-- TOP ROW: first Plan Generate, then File Upload -->
+        <div class="syllabus-top">
+
+          <div class="card">
+            <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-target"/></svg> <span data-i18n-key="aiStudyPlanner">AI Study Planner</span></div>
+            <p class="mini-note" style="font-size:.78rem;color:var(--text2);margin-bottom:10px" data-i18n-key="plannerNote">Enter your exam date — the planner calculates exactly how many hours you need per day to finish every remaining chapter on time.</p>
+            <div class="form-row">
+              <div class="form-group" style="flex:1">
+                <label data-i18n-key="plannerExamName">Exam name (optional)</label>
+                <input id="planner-exam-name" placeholder="e.g. HSC 2026"/>
+              </div>
+              <div class="form-group" style="flex:1">
+                <label data-i18n-key="plannerExamDate">Exam date</label>
+                <input type="date" id="planner-exam-date"/>
+              </div>
+            </div>
+              <div class="form-row">
+                <div class="form-group" style="flex:1">
+                  <label data-i18n-key="plannerIntensity">Intensity</label>
+                  <select id="planner-intensity">
+                    <option value="1" data-i18n-text-key="plannerIntensityNormal">Normal (1.0x)</option>
+                    <option value="1.3" data-i18n-text-key="plannerIntensityAggressive">Aggressive (1.3x)</option>
+                    <option value="1.6" data-i18n-text-key="plannerIntensityExtreme">Extreme (1.6x)</option>
+                  </select>
+                </div>
+                <div class="form-group" style="flex:1">
+                  <label data-i18n-key="plannerHoursPerChapter">Hours per chapter</label>
+                  <input type="number" id="planner-hours-per-chapter" value="3" min="0.5" step="0.5"/>
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+                <button class="btn btn-primary btn-sm" id="planner-calc-btn"><svg class="ico sm"><use href="assets/icons.svg#i-sparkles"/></svg> <span data-i18n-key="plannerCalc">Calculate plan</span></button>
+                <button class="btn btn-ai btn-sm" id="planner-ai-btn" data-needs-online><svg class="ico sm"><use href="assets/icons.svg#i-target"/></svg> <span data-i18n-key="plannerAIBtn">🤖 AI Full Plan (Routine + Tasks)</span></button>
+              </div>
+              <div id="planner-result" style="margin-top:12px"></div>
+              <div id="planner-nexus" style="margin-top:12px"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-syllabus"/></svg> <span data-i18n-key="uploadSyllabusOcr">Upload Syllabus (PDF / Image)</span></div>
+            <p class="mini-note" style="font-size:.78rem;color:var(--text2);margin-bottom:8px" data-i18n-key="ocrFileNote">
+              Your file is saved to IndexedDB on this device &mdash; it never goes to a server. AI OCR uses the system AI during trial / packages, or your own Gemini key.
+            </p>
+            <div class="form-row">
+              <div class="form-group" style="flex:1">
+                <label data-i18n-key="ocrSubjectLabel">Subject (used to tag extracted chapters)</label>
+                <input id="syllabus-ocr-subject" placeholder="Physics" list="subjects-datalist"/>
+              </div>
+              <div class="form-group" style="flex:1">
+                <label data-i18n-key="ocrFileLabel">File</label>
+                <input type="file" id="syllabus-ocr-file" accept="image/*,application/pdf"/>
+              </div>
+            </div>
+            <button class="btn btn-ai btn-sm" id="syllabus-ocr-run-btn" data-needs-online><svg class="ico sm"><use href="assets/icons.svg#i-ai"/></svg> <span data-i18n-key="extractChaptersAi">Extract Chapters with AI</span></button>
+            <div id="syllabus-ocr-status" class="mini-note" style="margin-top:8px;font-size:.78rem"></div>
+            <div id="syllabus-ocr-result" style="margin-top:10px"></div>
+            <div class="card-title" style="margin-top:14px;font-size:.95rem"><svg class="ico sm"><use href="assets/icons.svg#i-book-open"/></svg> <span data-i18n-key="savedFiles">Saved Files</span></div>
+            <div id="syllabus-files-list" class="syllabus-files-list" style="margin-top:6px"></div>
+          </div>
+        </div>
+
+        <div class="syllabus-layout">
+
+          <!-- ===== LEFT COLUMN ===== -->
+          <div class="syllabus-side">
+
+            <div class="card">
+              <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-book-open"/></svg> <span data-i18n-key="addChapterTopic">Add chapter / topic</span></div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label data-i18n-key="subject">Subject</label>
+                  <input id="syllabus-subject" placeholder="Physics" list="subjects-datalist"/>
+                  <datalist id="subjects-datalist"></datalist>
+                </div>
+                <div class="form-group">
+                  <label data-i18n-key="chapter">Chapter</label>
+                  <input id="syllabus-topic" placeholder="Newton's laws of motion"/>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label data-i18n-key="classLevel">Class</label>
+                  <select id="syllabus-class">
+                    <option value="">(যেকোনো)</option>
+                    <option value="6">Class 6</option>
+                    <option value="7">Class 7</option>
+                    <option value="8">Class 8</option>
+                    <option value="9">Class 9</option>
+                    <option value="10">Class 10</option>
+                    <option value="11">Class 11</option>
+                    <option value="12">Class 12</option>
+                    <option value="SSC">SSC (৯-১০)</option>
+                    <option value="HSC">HSC (১১-১২)</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="form-group" style="display:flex;align-items:flex-end">
+                  <button class="btn btn-primary btn-block" id="add-syllabus-btn" style="width:100%"><svg class="ico"><use href="assets/icons.svg#i-add"/></svg> <span data-i18n-key="addToSyllabus">Add to syllabus</span></button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label data-i18n-key="noteOptional">Note (optional)</label>
+                <textarea id="syllabus-note" placeholder="Important formulas, key points..."></textarea>
+              </div>
+              <div class="card-title" style="margin-top:18px"><svg class="ico"><use href="assets/icons.svg#i-syllabus"/></svg> <span data-i18n-key="chapters">Chapters</span></div>
+              <div id="chapter-list" class="chapter-list" style="margin-top:8px"></div>
+              <div class="card-title" style="margin-top:18px;display:flex;justify-content:space-between;align-items:center"><span><svg class="ico"><use href="assets/icons.svg#i-target"/></svg> <span data-i18n-key="rewards">Rewards</span></span><span id="points-badge" class="points-badge">⭐ 0</span></div>
+              <p class="mini-note" style="font-size:.78rem;color:var(--text2);margin-bottom:8px" data-i18n-key="pointsHint">চ্যাপ্টার শেষ করলে +5 পয়েন্ট, উত্তর চেক করলে রেটিং অনুযায়ী পয়েন্ট — ভবিষ্যতে এগুলো দিয়ে পুরস্কার!</p>
+            </div>
+          </div>
+
+          <!-- ===== RIGHT COLUMN ===== -->
+          <div class="syllabus-main">
+
+            <div class="card">
+              <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-target"/></svg> <span data-i18n-key="progressPerChapter">Progress per chapter</span></div>
+              <div id="syllabus-list" style="margin-top:8px"></div>
+            </div>
+
+            <div class="card">
+              <div class="ai-questions-header">
+                <div class="ai-questions-title"><svg class="ico"><use href="assets/icons.svg#i-sparkles"/></svg> <span data-i18n-key="aiPracticeQuestions">AI Practice Questions</span> <span id="ai-q-cache-tag" class="chapter-cache-tag" style="display:none"></span></div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <button class="btn btn-primary btn-sm" id="ai-q-generate-btn" data-needs-online><svg class="ico sm"><use href="assets/icons.svg#i-sparkles"/></svg> <span data-i18n-key="generate">Generate</span></button>
+                  <button class="btn btn-ai btn-sm" id="ai-q-regenerate-btn" data-needs-online><svg class="ico sm"><use href="assets/icons.svg#i-refresh"/></svg> <span data-i18n-key="generateNew">Generate New</span></button>
+                  <button class="btn btn-success btn-sm" id="answer-check-btn" data-needs-online><svg class="ico sm"><use href="assets/icons.svg#i-camera"/></svg> <span data-i18n-key="answerCheckBtn">📷 উত্তর চেক</span></button>
+                </div>
+              </div>
+              <div class="form-row" style="margin-top:10px">
+                <div class="form-group" style="flex:1">
+                  <label data-i18n-key="subject">Subject</label>
+                  <select id="ai-q-subject"><option value="">— select —</option></select>
+                </div>
+                <div class="form-group" style="flex:1">
+                  <label data-i18n-key="chapter">Chapter</label>
+                  <select id="ai-q-chapter"><option value="">— select —</option></select>
+                </div>
+                <div class="form-group">
+                  <label data-i18n-key="qType">Type</label>
+                  <select id="ai-q-type">
+                    <option value="mcq">MCQ</option>
+                    <option value="cq">CQ</option>
+                    <option value="long">Long</option>
+                  </select>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px">
+                <button class="btn btn-ghost btn-sm" id="ai-q-multi-btn">🧪 <span data-i18n-key="multiMode">Multiple chapters test</span></button>
+              </div>
+              <div id="ai-q-multi-box" style="display:none;border:1px dashed var(--border,#cbd5e1);border-radius:10px;padding:10px;margin-bottom:10px">
+                <div class="mini-note" style="font-size:.75rem;color:var(--text2);margin-bottom:6px" data-i18n-key="multiModeHint">Check the chapters you want in this test, then start — questions come from ALL selected chapters.</div>
+                <div id="ai-q-multi-list" style="display:flex;flex-direction:column;gap:4px;max-height:180px;overflow:auto"></div>
+                <button class="btn btn-primary btn-sm" id="ai-q-multi-start" style="margin-top:8px">🚀 <span data-i18n-key="multiStart">Start test</span></button>
+              </div>
+              <div style="font-size:.78rem;color:var(--text2);margin-bottom:8px" id="ai-q-chapter-title" data-i18n-key="selectChapter">Select a chapter</div>
+              <div class="questions-panel" id="ai-q-list">
+                <div class="empty-state">
+                  <svg class="ico xl"><use href="assets/icons.svg#i-sparkles"/></svg>
+                  <div class="empty-title" data-i18n-key="pickChapter">Pick a chapter</div>
+                  <div class="empty-text" data-i18n-key="emptyCachedText">View cached questions or create new ones</div>
+                </div>
+              </div>
+              <p class="mini-note" style="margin-top:8px" data-i18n-key="aiQuestionHint">If another student has already generated questions for this class and chapter, they are shown automatically from the cache. Tap "Generate New" to create a fresh question set.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ===== PRACTICE CENTER (NEXUS) ===== -->
+      <section id="view-practice" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-graduation"/></svg> <span data-i18n-key="practiceCenter">Practice Center</span></div></div>
+
+        <div class="syllabus-layout">
+          <div class="syllabus-side">
+            <div class="card">
+              <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-syllabus"/></svg> <span data-i18n-key="pcSyllabus">আপনার পাঠ্যসূচি (NEXUS)</span></div>
+              <div id="pc-syllabus-summary" style="margin-top:4px"></div>
+              <button class="btn btn-secondary btn-sm" id="pc-clear-syllabus-btn" style="margin-top:10px"><svg class="ico sm"><use href="assets/icons.svg#i-trash"/></svg> <span data-i18n-key="pcClear">Clear syllabus &amp; plan</span></button>
+            </div>
+            <div class="card">
+              <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-target"/></svg> <span data-i18n-key="pcStudyPlan">Day-by-Day Study Plan</span></div>
+              <div id="pc-study-plan" style="margin-top:4px"></div>
+            </div>
+          </div>
+
+          <div class="syllabus-main">
+            <div class="card">
+              <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-graduation"/></svg> <span data-i18n-key="pcQuestions">Practice &amp; Question Generator</span></div>
+              <p class="mini-note" style="font-size:.78rem;color:var(--text2);margin-bottom:10px" data-i18n-key="pcNote">সিলেবাস আপলোড করলে বিষয় ও অধ্যায় এখানে অটো-যুক্ত হয় — MCQ / CQ / Long প্রশ্ন তৈরি করুন।</p>
+              <div class="form-row">
+                <div class="form-group" style="flex:1">
+                  <label data-i18n-key="subject">Subject</label>
+                  <select id="pc-subject"><option value="">— select —</option></select>
+                </div>
+                <div class="form-group" style="flex:1">
+                  <label data-i18n-key="chapter">Chapter</label>
+                  <select id="pc-chapter"><option value="">— select —</option></select>
+                </div>
+                <div class="form-group" style="flex:1">
+                  <label data-i18n-key="questionType">Type</label>
+                  <select id="pc-type">
+                    <option value="mcq">MCQ</option>
+                    <option value="cq">CQ</option>
+                    <option value="long">Long</option>
+                  </select>
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+                <button class="btn btn-ai btn-sm" id="pc-generate-btn"><svg class="ico sm"><use href="assets/icons.svg#i-sparkles"/></svg> <span data-i18n-key="pcGenerate">Generate Questions</span></button>
+                <button class="btn btn-secondary btn-sm" id="pc-regenerate-btn"><svg class="ico sm"><use href="assets/icons.svg#i-refresh"/></svg> <span data-i18n-key="aiQuestionsRegenerate">Regenerate</span></button>
+              </div>
+              <div class="questions-panel" id="pc-q-list" style="margin-top:10px">
+                <div class="empty-state">
+                  <svg class="ico xl"><use href="assets/icons.svg#i-sparkles"/></svg>
+                  <div class="empty-title" data-i18n-key="pcPick">বিষয় ও অধ্যায় নির্বাচন করুন</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== YOUTUBE COURSES ===== -->
+      <section id="view-courses" class="section-view">
+        <div class="section-header">
+          <div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-play"/></svg> <span data-i18n-key="youtubeCourses">YouTube Courses</span></div>
+        </div>
+        <div class="card" style="max-width:780px">
+          <p class="mini-note" style="font-size:.82rem;color:var(--text2);margin-bottom:8px" data-i18n-key="ytNote">
+            Paste one or more YouTube playlist or video links (one per line). Each video / playlist is added as a separate shortcut. Saved on this device only.
+          </p>
+          <div class="form-row">
+            <div class="form-group" style="flex:1">
+              <label data-i18n-key="courseTitle">Course Title</label>
+              <input id="yt-course-title" placeholder="HSC Physics &mdash; full course" data-i18n-placeholder="ytCourseTitlePh"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label data-i18n-key="ytLinksLabel">YouTube link(s) &mdash; one per line (playlist or single video)</label>
+            <textarea id="yt-course-url" rows="4" placeholder="https://www.youtube.com/playlist?list=PL...&#10;https://youtu.be/dQw4w9WgXcQ&#10;https://www.youtube.com/watch?v=..."></textarea>
+          </div>
+          <button class="btn btn-primary btn-sm" id="yt-course-add-btn"><svg class="ico sm"><use href="assets/icons.svg#i-add"/></svg> <span data-i18n-key="addCourse">Add course</span></button>
+        </div>
+
+        <div id="yt-course-list" class="yt-course-list" style="margin-top:14px"></div>
+
+        <div id="yt-course-player-wrap" class="yt-player-wrap" style="display:none;margin-top:14px">
+          <div class="yt-player-inner">
+            <div id="yt-course-player-frame"></div>
+            <div class="yt-player-side">
+              <div class="card-title" id="yt-course-player-title">&mdash;</div>
+              <div id="yt-course-player-list" class="yt-player-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== TASKS ===== -->
+      <section id="view-tasks" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-tasks"/></svg> <span data-i18n-key="tasksTitle">Tasks</span></div></div>
+        <div class="card" style="max-width:720px">
+          <div class="form-row">
+            <div class="form-group">
+              <label data-i18n-key="title">Title</label>
+              <input id="task-title" placeholder="Solve 5 math problems" data-i18n-placeholder="taskTitlePh"/>
+            </div>
+            <div class="form-group">
+              <label data-i18n-key="reminderTime">Reminder Time</label>
+              <input type="time" id="task-time"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label data-i18n-key="source">Source</label>
+              <select id="task-source">
+                <option value="custom" data-i18n-text-key="taskSourceCustom">Custom</option>
+                <option value="daily" data-i18n-text-key="taskSourceDaily">Daily</option>
+                <option value="repeated" data-i18n-text-key="taskSourceDailyRepeat">Daily Repeat</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label data-i18n-key="repeat">Repeat</label>
+              <select id="task-repeat">
+                <option value="none" data-i18n-text-key="taskRepeatNone">Once</option>
+                <option value="daily" data-i18n-text-key="taskRepeatDaily">Daily</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category</label>
+              <select id="task-category">
+                <option value="study">📚 Study</option>
+                <option value="homework">📝 Homework</option>
+                <option value="revision">🔄 Revision</option>
+                <option value="quick">⚡ Quick</option>
+                <option value="deep">🧠 Deep Work</option>
+                <option value="reading">📖 Reading</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Priority</label>
+              <select id="task-priority">
+                <option value="medium">🟡 Medium</option>
+                <option value="high">🔴 High</option>
+                <option value="low">🟢 Low</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Due Date</label>
+              <input type="date" id="task-due"/>
+            </div>
+            <div class="form-group">
+              <label>Project</label>
+              <select id="task-project"><option value="">— No project —</option></select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Tags</label>
+            <input id="task-tags" placeholder="exam, physics, chapter-3 (comma separated)"/>
+          </div>
+          <div class="form-group">
+            <label data-i18n-key="details">Details</label>
+            <textarea id="task-details" placeholder="Notes, link, or extra info" data-i18n-placeholder="taskDetailsPh"></textarea>
+          </div>
+          <div class="form-footer">
+            <button class="btn btn-primary" id="add-task-btn"><svg class="ico"><use href="assets/icons.svg#i-add"/></svg> <span data-i18n-key="addTaskButton">Add Task</span></button>
+          </div>
+        </div>
+        <div class="filter-tabs" id="task-filter-tabs" style="margin-top:14px"></div>
+        <div id="task-list" style="margin-top:14px"></div>
+      </section>
+
+      <!-- ===== PROJECTS ===== -->
+      <section id="view-projects" class="section-view">
+        <div class="section-header">
+          <div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-folder"/></svg> <span>Projects</span></div>
+          <button class="btn btn-primary btn-sm" id="open-add-project-btn"><svg class="ico"><use href="assets/icons.svg#i-add"/></svg> New Project</button>
+        </div>
+        <div class="project-stats-row">
+          <div class="project-stat-card"><div class="project-stat-value" id="stat-projects">0</div><div class="project-stat-label">Total</div></div>
+          <div class="project-stat-card"><div class="project-stat-value" id="stat-projects-active">0</div><div class="project-stat-label">Active</div></div>
+          <div class="project-stat-card"><div class="project-stat-value" id="stat-projects-completed">0</div><div class="project-stat-label">Completed</div></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          <div class="search-bar" style="flex:1;min-width:200px">
+            <svg class="ico"><use href="assets/icons.svg#i-search"/></svg>
+            <input class="search-input" id="projects-search" placeholder="Search projects..."/>
+          </div>
+        </div>
+        <div class="filter-tabs" id="project-filter-tabs"></div>
+        <div class="projects-grid" id="projects-grid" style="margin-top:14px"></div>
+      </section>
+
+      <!-- ===== FILES ===== -->
+      <section id="view-files" class="section-view">
+        <div class="section-header">
+          <div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-paper"/></svg> <span>Files</span></div>
+          <button class="btn btn-primary btn-sm" id="open-add-file-btn"><svg class="ico"><use href="assets/icons.svg#i-add"/></svg> Upload</button>
+          <input type="file" id="files-input" multiple style="display:none"/>
+        </div>
+        <div class="file-stats-row">
+          <div class="file-stat-card"><div class="file-stat-value" id="stat-files">0</div><div class="file-stat-label">Files</div></div>
+          <div class="file-stat-card"><div class="file-stat-value" id="stat-files-size">0 B</div><div class="file-stat-label">Total size</div></div>
+          <div class="file-stat-card"><div class="file-stat-value" id="stat-storage">—</div><div class="file-stat-label">Device storage used</div></div>
+          <div class="file-stat-card"><div class="file-stat-hint">Drag &amp; drop or press Upload — files are stored on this device (offline-friendly)</div></div>
+        </div>
+        <div id="storage-quota-banner" class="storage-quota-banner" hidden></div>
+        <div class="search-bar" style="margin-bottom:14px">
+          <svg class="ico"><use href="assets/icons.svg#i-search"/></svg>
+          <input class="search-input" id="files-search" placeholder="Search files..."/>
+        </div>
+        <div class="files-grid" id="files-grid"></div>
+      </section>
+
+      <!-- ===== SETTINGS ===== -->
+      <section id="view-settings" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-settings"/></svg> <span data-i18n-key="settingsTitle">Settings</span></div></div>
+
+        <div class="settings-layout">
+
+          <!-- ===== SIDEBAR NAV (top tabs on mobile) ===== -->
+          <nav class="settings-nav" role="tablist" aria-label="Settings sections">
+            <button type="button" class="settings-tab is-active" data-settings-tab="profile" role="tab" aria-selected="true"><svg class="ico"><use href="assets/icons.svg#i-user"/></svg> <span data-i18n-key="settingsTabProfile">Profile &amp; Family</span></button>
+            <button type="button" class="settings-tab" data-settings-tab="appearance" role="tab" aria-selected="false"><svg class="ico"><use href="assets/icons.svg#i-sparkles"/></svg> <span data-i18n-key="settingsTabAppearance">Appearance</span></button>
+            <button type="button" class="settings-tab" data-settings-tab="ai" role="tab" aria-selected="false"><svg class="ico"><use href="assets/icons.svg#i-key"/></svg> <span data-i18n-key="settingsTabAi">AI &amp; Voice</span></button>
+            <button type="button" class="settings-tab" data-settings-tab="study" role="tab" aria-selected="false"><svg class="ico"><use href="assets/icons.svg#i-focus"/></svg> <span data-i18n-key="settingsTabStudy">Study &amp; Focus</span></button>
+            <button type="button" class="settings-tab" data-settings-tab="app" role="tab" aria-selected="false"><svg class="ico"><use href="assets/icons.svg#i-credit"/></svg> <span data-i18n-key="settingsTabApp">Subscription &amp; App</span></button>
+          </nav>
+
+          <div class="settings-panes">
+
+            <!-- ===== TAB 1: PROFILE & FAMILY ===== -->
+            <div class="settings-pane is-active" data-settings-pane="profile" role="tabpanel">
+              <div class="settings-grid">
+
+                <div class="manage-card settings-card">
+                  <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-user"/></svg> <span data-i18n-key="profileTitle">Profile</span></div>
+            <div class="profile-pic-row">
+              <div class="profile-preview" id="profile-preview"><div class="profile-fallback">S</div></div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <input type="file" id="profile-file-input" accept="image/*" style="display:none"/>
+                <button type="button" class="btn btn-secondary btn-sm" id="profile-pick-btn"><svg class="ico"><use href="assets/icons.svg#i-image"/></svg> <span data-i18n-key="uploadPhoto">Upload photo</span></button>
+                <button type="button" class="btn btn-danger btn-sm" id="profile-remove-btn"><span data-i18n-key="remove">Remove</span></button>
+              </div>
+            </div>
+            <div class="form-group"><label data-i18n-key="fullName">Full Name</label><input id="settings-name"/></div>
+            <div class="form-group">
+              <label data-i18n-key="userIdLabel">User ID (unique username)</label>
+              <div style="display:flex;gap:8px">
+                <input id="settings-user-id" readonly style="flex:1"/>
+                <button type="button" class="btn btn-secondary btn-sm" id="settings-user-id-edit-btn"><span data-i18n-key="edit">Edit</span></button>
+              </div>
+              <p class="mini-note" data-i18n-key="userIdHint">This is your unique username. Others can find your profile with it.</p>
+            </div>
+            <div class="form-group">
+              <label data-i18n-key="changePasswordBtn">Change Password</label>
+              <button type="button" class="btn btn-secondary btn-block" id="settings-change-pw-btn">
+                <svg class="ico"><use href="assets/icons.svg#i-key"/></svg> <span data-i18n-key="changePasswordBtn">Change Password</span>
+              </button>
+            </div>
+            <div class="form-group"><label data-i18n-key="institution">Institution</label><select id="settings-institution" data-school-select data-no-other="1" data-no-auto="1"><option value="">— Select your institution —</option></select></div>
+            <div class="form-row">
+              <div class="form-group"><label data-i18n-key="district">District</label><select id="settings-district"><option value="">— Select —</option></select></div>
+              <div class="form-group"><label data-i18n-key="upazila">Upazila / City</label><select id="settings-upazila"><option value="">— Select —</option></select></div>
+            </div>
+            <div class="form-group"><label data-i18n-key="classLevel">Class / Level</label><select id="settings-class"></select></div>
+            <div class="form-group"><label data-i18n-key="boardCategory">Board / Category</label>
+              <select id="settings-category">
+                <option value="general" data-i18n-text-key="categoryGeneral">General</option>
+                <option value="vocational" data-i18n-text-key="categoryVocational">Vocational / Technical</option>
+                <option value="dakhil" data-i18n-text-key="categoryDakhil">Dakhil / Madrasa</option>
+              </select>
+              <p class="mini-note" data-i18n-key="boardCategoryHint">Syllabus OCR ও প্রশ্ন জেনারেশন এই বিভাগ অনুযায়ী ফিল্টার করবে।</p>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label data-i18n-key="religion">Religion</label>
+                <select id="settings-religion">
+                  <option value="islam">Islam</option><option value="hindu">Hindu</option>
+                  <option value="christian">Christian</option><option value="buddhist">Buddhist</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <div class="toggle-row">
+                  <span class="mini-note" data-i18n-key="prayerReminder">Prayer reminder</span>
+                  <label class="tgl"><input type="checkbox" id="settings-prayer-enabled"/><span class="tgl-sl"></span></label>
+                </div>
+              </div>
+              <div class="form-group"><label data-i18n-key="prayerMethod">Prayer method</label>
+                <select id="settings-prayer-method">
+                  <option value="1">University of Islamic Sciences</option>
+                  <option value="2">ISNA</option>
+                  <option value="3">Muslim World League</option>
+                  <option value="4">Umm Al-Qura</option>
+                  <option value="5">Egyptian Authority</option>
+                  <option value="7">Institute of Geophysics</option>
+                  <option value="8">Gulf Region</option>
+                  <option value="9">Kuwait</option>
+                  <option value="10">Qatar</option>
+                  <option value="11">Singapore</option>
+                  <option value="12">France</option>
+                  <option value="13">Turkey</option>
+                  <option value="14">Russia</option>
+                  <option value="15">Moonsighting Committee</option>
+                </select>
+              </div>
+              <div class="form-group"><label data-i18n-key="asrMadhhab">Asr madhhab</label>
+                <select id="settings-prayer-school">
+                  <option value="0">Standard / Shafi</option>
+                  <option value="1">Hanafi</option>
+                </select>
+              </div>
+            </div>
+                </div>
+
+                <div class="manage-card settings-card" id="settings-parent-card">
+                  <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-users"/></svg> <span data-i18n-key="parentInfoTitle">Parent / Guardian Information</span></div>
+                  <div class="form-row">
+                    <div class="form-group"><label data-i18n-key="authParentNameLabel">Parent Name</label><input id="settings-parent-name"/></div>
+                    <div class="form-group"><label data-i18n-key="authParentPhoneLabel">Parent Phone</label><input id="settings-parent-phone" type="tel"/></div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label data-i18n-key="authParentRelationLabel">Relation</label>
+                      <select id="settings-parent-relation">
+                        <option value="father">Father</option><option value="mother">Mother</option><option value="guardian">Guardian</option>
+                      </select>
+                    </div>
+                    <div class="form-group"><label data-i18n-key="authParentOccupationLabel">Occupation</label><input id="settings-parent-occupation"/></div>
+                  </div>
+                  <p class="mini-note" id="settings-parent-verify-status" style="display:none"></p>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ===== TAB 2: APPEARANCE ===== -->
+            <div class="settings-pane" data-settings-pane="appearance" role="tabpanel">
+              <div class="settings-grid">
+
+                <div class="manage-card appearance-card settings-card">
+                  <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-sparkles"/></svg> <span data-i18n-key="appearance">Appearance</span></div>
+                  <p class="mini-note" data-i18n-key="appearanceNote">Choose the look of your workspace. Changes are automatically saved on this device.</p>
+                  <div class="appearance-preview" id="appearance-preview">
+                    <div class="appearance-preview-top"></div>
+                    <div class="appearance-preview-lines"><span></span><span></span><span></span></div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label data-i18n-key="template">Template</label>
+                      <select id="appearance-template">
+                        <option value="calm">Calm Focus</option>
+                        <option value="ocean">Ocean Study</option>
+                        <option value="forest">Forest Desk</option>
+                        <option value="rose">Rose Notes</option>
+                        <option value="sunrise">Sunrise Exam</option>
+                        <option value="graphite">Graphite Pro</option>
+                        <option value="mono">Minimal Mono</option>
+                        <option value="midnight">Midnight Lab</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label data-i18n-key="accentColor">Accent color</label>
+                      <input type="color" id="appearance-accent" value="#2563eb"/>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label data-i18n-key="fontStyle">Font style</label>
+                      <select id="appearance-font">
+                        <option value="clean">Clean UI</option>
+                        <option value="bangla">Bangla Focus</option>
+                        <option value="rounded">Rounded</option>
+                        <option value="serif">Classic</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label data-i18n-key="density">Density</label>
+                      <select id="appearance-density">
+                        <option value="cozy">Cozy</option>
+                        <option value="compact">Compact</option>
+                        <option value="spacious">Spacious</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label data-i18n-key="corners">Corners</label>
+                      <select id="appearance-radius">
+                        <option value="soft">Soft</option>
+                        <option value="crisp">Crisp</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label data-i18n-key="resetDesign">Reset design</label>
+                      <button type="button" class="btn btn-secondary btn-block" id="appearance-reset-btn"><svg class="ico"><use href="assets/icons.svg#i-refresh"/></svg> <span data-i18n-key="defaultLook">Default look</span></button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ===== TAB 3: AI & VOICE ===== -->
+            <div class="settings-pane" data-settings-pane="ai" role="tabpanel">
+              <div class="settings-grid">
+
+                <div class="manage-card settings-card" id="settings-aikey-card">
+            <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-key"/></svg> <span data-i18n-key="aiKeysTitle">Your AI Keys</span></div>
+            <p class="mini-note" data-i18n-key="aiKeysNote">Add your own API key and AI features keep working even after the free trial ends.</p>
+            <p class="mini-note" id="settings-ai-mode-note" style="display:none;color:var(--accent);font-weight:600"></p>
+            <div id="settings-key-inputs">
+              <div class="form-group"><label data-i18n-key="geminiKey">Google Gemini API Key</label>
+                <div class="input-with-action">
+                  <input type="password" id="settings-gemini-key" placeholder="AIzaSy..."/>
+                  <button type="button" class="input-action" data-toggle-pw="settings-gemini-key"><svg class="ico"><use href="assets/icons.svg#i-eye"/></svg></button>
+                </div>
+              </div>
+              <div class="form-group"><label data-i18n-key="groqKey">Groq API Key</label>
+                <div class="input-with-action">
+                  <input type="password" id="settings-groq-key" placeholder="gsk_..."/>
+                  <button type="button" class="input-action" data-toggle-pw="settings-groq-key"><svg class="ico"><use href="assets/icons.svg#i-eye"/></svg></button>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label data-i18n-key="totalAiRequests">Total AI requests used</label>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="badge" style="font-size:.84rem"><svg class="ico sm"><use href="assets/icons.svg#i-ai"/></svg> <span id="settings-api-usage">0</span></span>
+                <span id="settings-trial-info" style="font-size:.84rem"></span>
+              </div>
+              <div class="form-row" style="margin-top:10px">
+                <div class="form-group" id="settings-aiplan-row">
+                  <label>AI Plan</label>
+                  <select id="settings-aiplan" disabled title="AI plan system-এর নিয়ন্ত্রণে">
+                    <option value="system">System — আপনার নিজের API key</option>
+                    <option value="full">Full — system AI (key লাগবে না)</option>
+                  </select>
+                  <p class="mini-note" style="font-size:.75rem;color:var(--text2)">AI plan শুধু system পরিবর্তন করতে পারে।</p>
+                </div>
+                <div class="form-group">
+                  <label>Credits remaining</label>
+                  <div><span class="badge" style="font-size:.9rem"><svg class="ico sm"><use href="assets/icons.svg#i-credit"/></svg> <span id="settings-credits">0</span></span></div>
+                </div>
+              </div>
+              <p class="mini-note">“System” plan-এ আপনার নিজের API key ব্যবহার হয় (usage limit থাকে)। “Full” plan-এ system-এর global provider ব্যবহার হয় — এতে API key দেওয়ার কোনো অপশন থাকে না।</p>
+              <p class="mini-note" id="settings-freeai-lock-note" style="display:none;color:var(--warn);font-weight:600">এই ডিভাইসে ২টার বেশি একাউন্ট তৈরি হয়েছে — তাই ফ্রি AI credits দেওয়া বন্ধ করা হয়েছে।</p>
+            </div>
+          </div>
+
+          <div class="manage-card settings-card" id="settings-ai-guide-card" style="display:none">
+            <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-ai"/></svg> <span>Platform package — নিজের AI key setup guide</span></div>
+            <p class="mini-note" style="font-size:.82rem;color:var(--text2)">
+              আপনি <b>Platform</b> package-এ আছেন — সব feature আনলক, কিন্তু AI চালাতে আপনার নিজের API key লাগবে। নিচের ধাপে ২ মিনিটেই হয়ে যাবে। একটাই key যথেষ্ট (Gemini বা Groq)।
+            </p>
+            <ol class="ai-guide-steps">
+              <li><b>Gemini key</b>: খুলুন <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> → <b>Create API key</b> → নতুন key কপি করুন। (ফ্রি tier-এ প্রচুর request।)</li>
+              <li><b>Groq key</b> (alternative): খুলুন <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com/keys</a> → <b>Create API key</b> → কপি করুন। (অতি দ্রুত, সম্পূর্ণ ফ্রি।)</li>
+              <li>উপরের <b>Your AI Keys</b> কার্ডে key পেস্ট করুন → <b>Save</b> চাপুন।</li>
+              <li>শেষ! AI Chat, Explain, Mind Map, Question Bank — সব এখন কাজ করবে।</li>
+            </ol>
+            <p class="mini-note" style="font-size:.76rem;color:var(--text2)">💡 key বিল করা হয় আপনার Google/Groq account-এ — যত ব্যবহার তত খরচ, তাই প্রতিবার প্রশ্ন করতে ২টা credit কাটা হবে না।</p>
+          </div>
+
+          <div class="manage-card settings-card">
+            <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-speaker"/></svg> <span data-i18n-key="ttsSettingsTitle">Text to Speech</span></div>
+            <p class="mini-note" data-i18n-key="ttsSettingsNote">Turn read-aloud on or off and tune the voice speed for Bangla and English listening.</p>
+            <div class="form-row">
+              <div class="form-group" style="flex:1">
+                <div class="toggle-row">
+                  <span class="mini-note" data-i18n-key="ttsToggleLabel">Read aloud</span>
+                  <label class="tgl"><input type="checkbox" id="settings-tts-enabled"/><span class="tgl-sl"></span></label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label data-i18n-key="ttsRateLabel">Voice speed</label>
+                <input type="range" id="settings-tts-rate" min="0.7" max="1.2" step="0.05" value="1"/>
+                <div class="mini-note" id="settings-tts-rate-value" style="margin-top:4px">1.00x</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>AI Server URL (optional)</label>
+              <input type="url" id="settings-tts-server-url" placeholder="https://your-tts-server.onrender.com"/>
+              <p class="mini-note">System-এর সার্ভার URL ছাড়াও নিজের URL দিন। Bangla bn-BD ভয়েস পাবে। খালি রাখলে device/browser voice ব্যবহার হবে।</p>
+            </div>
+            <div class="form-group">
+              <label>Server Token (optional)</label>
+              <input type="password" id="settings-tts-server-token" placeholder="Bearer token (যদি সার্ভারে auth থাকে)"/>
+            </div>
+            <div class="mini-note" id="settings-tts-status"></div>
+              </div>
+
+            </div>
+          </div>
+
+            <!-- ===== TAB 4: STUDY & FOCUS ===== -->
+            <div class="settings-pane" data-settings-pane="study" role="tabpanel">
+              <div class="settings-grid">
+
+                <div class="manage-card settings-card">
+                  <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-focus"/></svg> <span data-i18n-key="floaterSettingsTitle">Floating Focus Timer</span></div>
+                  <p class="mini-note" data-i18n-key="floaterSettingsNote">Focus চলাকালীন স্ক্রিনের পাশে ভাসমান টাইমার দেখাবে। টেনে যেকোনো জায়গায় সরাতে পারবেন, cross দিয়ে সাময়িকভাবে লুকাতে পারবেন।</p>
+                  <div class="toggle-row">
+                    <span class="mini-note" data-i18n-key="floaterToggleLabel">Floating Focus Timer</span>
+                    <label class="tgl"><input type="checkbox" id="settings-floater-enabled"/><span class="tgl-sl"></span></label>
+                  </div>
+                </div>
+
+          <div class="manage-card settings-card" id="subject-manager-card">
+            <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-book-open"/></svg> <span>Subjects</span></div>
+            <p class="mini-note">আপনার সাবজেক্ট যোগ/রিমুভ করুন এবং প্রতিটি সাবজেক্টের জন্য বইয়ের কভারের মতো রঙ দিন। রঙ সব জায়গায় ব্যবহৃত হয় — নোট ব্যাজ, সাইডবার, সিলেবাস।</p>
+            <div id="subject-manager-panel"></div>
+          </div>
+
+          <div class="manage-card settings-card">
+            <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-flame"/></svg> <span data-i18n-key="streakSettingsTitle">Daily Streak &amp; Focus Timer</span></div>
+            <p class="mini-note" data-i18n-key="streakSettingsNote">Complete your daily focus target every day — a 21-day streak unlocks a profile badge, then a fresh streak begins.</p>
+            <div class="streak-stats">
+              <div class="streak-stat"><span class="ss-ico">🔥</span><b id="settings-streak-days">0</b><span class="ss-label" data-i18n-key="streakDayCount">day streak</span></div>
+              <div class="streak-stat"><span class="ss-ico">🏅</span><b id="settings-streak-badges">0</b><span class="ss-label" data-i18n-key="streakBadgeCount">badges</span></div>
+              <div class="streak-stat"><span class="ss-ico">⏳</span><b id="settings-streak-next">21</b><span class="ss-label" data-i18n-key="streakNextBadge">days to next badge</span></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="flex:1">
+                <label for="settings-header-timer" data-i18n-key="headerTimerToggleLabel">Show focus timer in header</label>
+                <div class="toggle-row">
+                  <span class="mini-note" data-i18n-key="headerTimerToggleNote">See the running focus timer next to your profile on every page.</span>
+                  <label class="tgl"><input type="checkbox" id="settings-header-timer"/><span class="tgl-sl"></span></label>
+                </div>
+              </div>
+            </div>
+                </div>
+
+                <div class="manage-card settings-card">
+                  <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-revision"/></svg> <span data-i18n-key="revisionSettings">Revision Settings</span></div>
+                  <div class="form-group">
+                    <label data-i18n-key="revisionDuration">Revision session duration (minutes)</label>
+                    <input type="number" id="settings-rev-duration" value="60" min="5" max="240"/>
+                    <p class="mini-note" data-i18n-key="revisionDurNote">After you start revision, the timer ends after this time.</p>
+                  </div>
+                  <div class="form-group">
+                    <label data-i18n-key="revisionNotif">Revision notification</label>
+                    <div style="display:flex;gap:8px;align-items:center">
+                      <span id="settings-notif-status" style="font-size:.84rem;color:var(--text2)">&#9989; On</span>
+                      <button class="btn btn-secondary btn-sm" id="settings-disable-notif-btn"><span data-i18n-key="disableNotifBtn">Send request to disable notification</span></button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ===== TAB 5: SUBSCRIPTION & APP ===== -->
+            <div class="settings-pane" data-settings-pane="app" role="tabpanel">
+              <div class="settings-grid">
+
+                <div class="manage-card settings-card" id="install-card">
+            <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-sparkles"/></svg> <span data-i18n-key="installAsApp">Install as App</span></div>
+            <p class="mini-note" data-i18n-key="installAppNote">Add to your home screen for fast &amp; offline access. No need to search for the browser tab.</p>
+            <div id="install-status" class="install-status"></div>
+            <button class="btn btn-primary btn-block" id="settings-install-btn" type="button">
+              <svg class="ico"><use href="assets/icons.svg#i-add"/></svg> <span data-i18n-key="installApp">Install App</span>
+            </button>
+            <a class="btn btn-secondary btn-block" id="settings-custom-app-link" href="#" target="_blank" rel="noopener" style="display:none;margin-top:8px">
+              <svg class="ico"><use href="assets/icons.svg#i-add"/></svg> <span data-i18n-key="downloadAppFile">Download app file</span>
+            </a>
+            <p class="mini-note" id="install-ios-hint" style="display:none;margin-top:8px" data-i18n-key="installIosHint">
+              &#128241; <strong>iPhone/iPad:</strong> In Safari tap Share <svg class="ico sm"><use href="assets/icons.svg#i-share"/></svg> &rarr; <strong>"Add to Home Screen"</strong>.
+            </p>
+          </div>
+
+          <div class="manage-card settings-card">
+            <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-credit"/></svg> <span data-i18n-key="subscriptionTitle">Subscription</span></div>
+            <p class="mini-note" data-i18n-key="subscriptionNote">14 day free trial &mdash; after that add your own API key or subscribe.</p>
+            <button class="btn btn-primary btn-block" data-section="payment"><svg class="ico"><use href="assets/icons.svg#i-credit"/></svg> <span data-i18n-key="viewPackages">View packages</span></button>
+            <button class="btn btn-secondary btn-block" data-section="refer" style="margin-top:8px"><svg class="ico"><use href="assets/icons.svg#i-gift"/></svg> <span data-i18n-key="referFriends">Refer friends &mdash; get 1 month free</span></button>
+          </div>
+
+          <div class="manage-card settings-card" style="border:1px solid rgba(239,68,68,.35)">
+            <div class="card-title" style="color:var(--danger)"><svg class="ico"><use href="assets/icons.svg#i-trash"/></svg> <span>Danger Zone</span></div>
+            <p class="mini-note">একবার delete করলে ফেরত আনা যাবে না — সব নোট, ফাইল, টাস্ক, প্রজেক্ট ও AI চ্যাট ইতিহাস চিরতরে মুছে যাবে।</p>
+            <button class="btn btn-danger btn-block" id="settings-delete-account-btn" type="button"><svg class="ico"><use href="assets/icons.svg#i-trash"/></svg> <span>Delete Account</span></button>
+          </div>
+        </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ===== STICKY SAVE BAR ===== -->
+        <div class="settings-savebar" id="settings-savebar">
+          <div class="settings-savebar-status">
+            <span class="st-clean" data-i18n-key="settingsAllSaved">All changes saved</span>
+            <span class="st-dirty" data-i18n-key="settingsSaveDirty">You have unsaved changes</span>
+          </div>
+          <button class="btn btn-success" id="save-settings-btn"><svg class="ico"><use href="assets/icons.svg#i-save"/></svg> <span data-i18n-key="saveSettings">Save Settings</span></button>
+        </div>
+      </section>
+
+      <!-- ===== REFER & EARN ===== -->
+      <section id="view-refer" class="section-view"></section>
+
+      <!-- ===== COMMUNITY ===== -->
+      <section id="view-community" class="section-view"></section>
+
+      <!-- ===== SUBSCRIBE / CHECKOUT ===== -->
+      <section id="view-payment" class="section-view">
+        <!-- Step 1: Package Selection -->
+        <div id="checkout-step1" class="checkout-step">
+          <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-credit"/></svg> Package নির্বাচন করুন</div></div>
+          <p class="mini-note">14 দিন ফ্রি ট্রাইাল। তারপর নিচের যেকোনো package নিন।</p>
+          <div id="package-list" class="package-grid" style="margin-top:14px"></div>
+        </div>
+
+        <!-- Step 2: Checkout Details -->
+        <div id="checkout-step2" class="checkout-step" style="display:none">
+          <div class="checkout-card">
+            <button type="button" class="checkout-back" id="checkout-back-btn">
+              <svg class="ico"><use href="assets/icons.svg#i-arrow-left"/></svg> পেছনে
+            </button>
+            <div class="checkout-header">
+              <div class="checkout-icon">📦</div>
+              <h2 class="checkout-title">Checkout</h2>
+            </div>
+
+            <!-- Selected Package Summary -->
+            <div id="checkout-pkg-summary" class="checkout-pkg-summary"></div>
+
+            <!-- Payment Method Selection -->
+            <div class="checkout-section">
+              <h3 class="checkout-section-title">পেমেন্ট মেথড নির্বাচন করুন</h3>
+              <div id="checkout-methods" class="checkout-methods"></div>
+            </div>
+
+            <!-- Payment Details Form -->
+            <div id="checkout-form" class="checkout-section" style="display:none">
+              <h3 class="checkout-section-title">পেমেন্ট তথ্য</h3>
+              <div id="checkout-method-instructions"></div>
+              <div class="form-group">
+                <label for="checkout-trxid">TRX ID</label>
+                <input id="checkout-trxid" placeholder="Transaction ID লিখুন"/>
+              </div>
+              <div class="form-group">
+                <label for="checkout-sender">Sender Number</label>
+                <input id="checkout-sender" placeholder="যে নম্বর থেকে পাঠিয়েছেন"/>
+              </div>
+              <div class="form-group">
+                <label for="checkout-promo">Promo Code <small style="text-transform:none">(ঐচ্ছিক)</small></label>
+                <input id="checkout-promo" placeholder="প্রোমো কোড থাকলে দিন"/>
+              </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="checkout-actions">
+              <button type="button" class="btn btn-primary btn-block btn-lg" id="checkout-submit-btn">
+                <svg class="ico"><use href="assets/icons.svg#i-check"/></svg> পেমেন্ট করুন
+              </button>
+              <p class="mini-note" style="text-align:center;margin-top:8px">
+                <svg class="ico sm"><use href="assets/icons.svg#i-lock"/></svg> আপনার তথ্য সম্পূর্ণ নিরাপদ
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Payment Waiting -->
+        <div id="checkout-step3" class="checkout-step" style="display:none">
+          <div class="checkout-card checkout-waiting-card">
+            <div class="checkout-waiting-animation">
+              <div class="waiting-lock" id="waiting-lock">
+                <svg class="ico" style="width:48px;height:48px"><use href="assets/icons.svg#i-lock"/></svg>
+              </div>
+              <div class="waiting-crown" id="waiting-crown" style="display:none">
+                <svg class="ico" style="width:48px;height:48px;color:#f59e0b"><use href="assets/icons.svg#i-crown"/></svg>
+              </div>
+            </div>
+            <h2 class="checkout-title" id="waiting-title">পেমেন্ট যাচাই হচ্ছে...</h2>
+            <p class="checkout-msg" id="waiting-msg">আপনার পেমেন্ট প্রসেস হচ্ছে। এই পেজ খোলা রাখুন।</p>
+            <div class="waiting-spinner" id="waiting-spinner">
+              <div class="spinner"></div>
+            </div>
+            <div id="waiting-result" style="display:none"></div>
+          </div>
+        </div>
+
+        <!-- Refund Request Section -->
+        <div id="checkout-refund" class="checkout-step" style="display:none">
+          <div class="checkout-card">
+            <div class="checkout-header">
+              <div class="checkout-icon">↩️</div>
+              <h2 class="checkout-title">Refund / Cancel অনুরোধ</h2>
+            </div>
+            <div id="refund-policy-box" class="refund-policy-box">
+              <h3>Refund Policy</h3>
+              <div id="refund-policy-content">লোড হচ্ছে...</div>
+            </div>
+            <div class="checkout-section">
+              <div class="form-group">
+                <label for="refund-reason">কেন refund চাচ্ছেন?</label>
+                <textarea id="refund-reason" rows="3" placeholder="আপনার কারণ লিখুন..."></textarea>
+              </div>
+              <button type="button" class="btn btn-primary btn-block" id="refund-submit-btn">
+                <svg class="ico"><use href="assets/icons.svg#i-send"/></svg> Refund অনুরোধ পাঠান
+              </button>
+              <button type="button" class="btn btn-ghost btn-block" id="refund-cancel-btn" style="margin-top:8px">বাতিল করুন</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== QUESTION BANK ===== -->
+      <section id="view-question-bank" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-book-open"/></svg> <span data-i18n-key="questionBank">Question Bank</span></div></div>
+        <div id="qb-setup" class="manage-card" style="display:none;margin-bottom:12px">
+          <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-settings"/></svg> <span data-i18n-key="prepSetup">Preparation setup</span></div>
+          <div class="form-row">
+            <div class="form-group"><label data-i18n-key="qbClass">Class / level</label><input id="qb-setup-class" placeholder="Class 10 / HSC"/></div>
+            <div class="form-group"><label data-i18n-key="qbExam">Exam</label><input id="qb-setup-exam" placeholder="SSC / HSC / Admission / BCS"/></div>
+          </div>
+          <button class="btn btn-primary" id="qb-setup-save"><svg class="ico"><use href="assets/icons.svg#i-check"/></svg> <span data-i18n-key="saveSetup">Save setup</span></button>
+        </div>
+        <div class="qb-toolbar">
+          <select id="qb-exam-filter"><option value="" data-i18n-text-key="allExams">All exams</option></select>
+          <select id="qb-class-filter"><option value="" data-i18n-text-key="allClasses">All classes</option></select>
+          <select id="qb-mode"><option value="reading" data-i18n-text-key="readingMode">Reading mode</option><option value="exam" data-i18n-text-key="examMode">Exam mode</option></select>
+        </div>
+        <div id="qb-list" class="question-bank-list"></div>
+        <div id="qb-detail" class="question-bank-detail"></div>
+      </section>
+
+      <!-- ===== CLASS QUESTION BANK (static /data banks) ===== -->
+      <section id="view-class-qb" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-paper"/></svg> <span data-i18n-key="classQbTitle">Class Question Bank</span></div></div>
+        <p class="mini-note" data-i18n-key="classQbHint">তোমার ক্লাসের টেস্ট পেপার ও অধ্যায়ভিত্তিক প্রশ্ন ব্যাঙ্ক — অফলাইনেও কাজ করে।</p>
+        <div id="class-qb-root"></div>
+      </section>
+
+      <!-- ===== BOARD EXAM PDFs ===== -->
+      <section id="view-board-pdfs" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-save"/></svg> <span>Board Exam PDFs</span></div></div>
+        <p class="mini-note"></p>
+        <div class="qb-toolbar" style="margin-bottom:12px">
+          <select id="bpdf-user-exam"><option value="">All exams</option></select>
+          <select id="bpdf-user-board"><option value="">All boards</option></select>
+          <select id="bpdf-user-year"><option value="">All years</option></select>
+          <select id="bpdf-user-subject"><option value="">All subjects</option></select>
+          <button class="btn btn-secondary btn-sm" id="bpdf-user-refresh">Refresh</button>
+        </div>
+        <div id="board-pdfs-root"><div class="empty-state"><div class="empty-title">লোড হচ্ছে…</div></div></div>
+      </section>
+
+      <!-- ===== RESOURCES ===== -->
+      <section id="view-resources" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-book-open"/></svg> Resources</div></div>
+        <p class="mini-note">Download study materials, notes, and resources for your class and subjects.</p>
+        <div class="form-row" style="margin-bottom:12px">
+          <div class="form-group">
+            <label>Filter by Class</label>
+            <select id="resource-filter-class"></select>
+          </div>
+          <div class="form-group">
+            <label>Filter by Subject</label>
+            <select id="resource-filter-subject"></select>
+          </div>
+        </div>
+            <div id="resource-list" style="display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))"></div>
+            <div id="resource-shared-list" style="display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));margin-top:18px"></div>
+        
+        <div class="card" style="margin-top:20px">
+          <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-add"/></svg> Request a Resource</div>
+          <p class="mini-note">Can't find what you need? Request specific materials from system.</p>
+          <div class="form-group"><label>Resource Title</label><input id="request-title" placeholder="e.g., HSC Physics Chapter 1 Notes"/></div>
+          <div class="form-row">
+            <div class="form-group"><label>Subject</label><input id="request-subject" placeholder="Physics"/></div>
+            <div class="form-group"><label>Chapter/Topic</label><input id="request-chapter" placeholder="Chapter 1"/></div>
+          </div>
+          <div class="form-group"><label>Description</label><textarea id="request-description" placeholder="Describe what you need..."></textarea></div>
+          <button class="btn btn-primary" id="resource-request-btn"><svg class="ico"><use href="assets/icons.svg#i-send"/></svg> Submit Request</button>
+        </div>
+      </section>
+
+      <!-- ===== PINNED SITES (Iframe Premium) ===== -->
+      <section id="view-pinned-sites" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-link"/></svg> Pinned Sites</div></div>
+        <p class="mini-note">Pin your favorite educational websites here. They open inside the app — no need to switch tabs.</p>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-add"/></svg> Pin a Website</div>
+          <div class="form-row">
+            <div class="form-group"><label>Website URL</label><input id="pin-url" type="url" placeholder="https://example.com"/></div>
+            <div class="form-group"><label>Title</label><input id="pin-title" placeholder="My Study Site"/></div>
+          </div>
+          <button class="btn btn-primary" id="pin-add-btn"><svg class="ico"><use href="assets/icons.svg#i-add"/></svg> Pin Site</button>
+        </div>
+        <div id="pinned-sites-grid" style="display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))"></div>
+        <div id="pinned-site-viewer" style="display:none;margin-top:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <h3 id="pinned-site-title" style="margin:0"></h3>
+            <div style="display:flex;gap:8px">
+              <a id="pinned-site-open" href="#" target="_blank" class="btn btn-secondary btn-sm">Open in new tab</a>
+              <button class="btn btn-danger btn-sm" id="pinned-site-close">Close</button>
+            </div>
+          </div>
+          <iframe id="pinned-site-iframe" sandbox="allow-scripts allow-forms allow-popups allow-same-origin" style="width:100%;min-height:60vh;border:1px solid var(--border);border-radius:10px;background:#fff"></iframe>
+        </div>
+      </section>
+
+      <!-- ===== LEADERBOARD ===== -->
+      <section id="view-leaderboard" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-flame"/></svg> <span data-i18n-key="leaderboard">Leaderboard</span></div></div>
+        <p class="mini-note" data-i18n-key="lbNote">The more you use the Focus Timer, the higher your rank. Every student in every class is ranked in real time.</p>
+        <div class="lb-controls">
+          <label data-i18n-key="filterByClass">Filter by class:</label>
+          <select id="lb-class-filter"></select>
+        </div>
+        <div class="lb-tabs">
+          <button class="lb-tab active" data-tab="all"><span data-i18n-key="lbAllTime">🏆 All Time</span></button>
+          <button class="lb-tab" data-tab="weekly"><span data-i18n-key="lbThisWeek">📅 This Week</span></button>
+          <button class="lb-tab" data-tab="screen"><span data-i18n-key="lbScreenTime">📱 Screen Time (24h)</span></button>
+        </div>
+        <div class="card" id="lb-list" style="margin-top:12px"></div>
+      </section>
+
+      <!-- ===== CLASS COMMUNITY ===== -->
+      <section id="view-class-chat" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-megaphone"/></svg> <span data-i18n-key="classCommunityTitle">Class Community</span></div></div>
+        <p class="mini-note" data-i18n-key="ccNote">Everyone in your class is in this group &mdash; you cannot leave. Talk in front of everyone.</p>
+        <div class="chat-shell">
+          <div class="chat-shell-messages" id="cc-messages"></div>
+          <div class="chat-shell-input">
+            <textarea id="cc-input" placeholder="Write something..." data-i18n-placeholder="ccInputPh" data-mic-target></textarea>
+            <button class="btn btn-secondary" data-mic-btn title="Voice to text"><svg class="ico"><use href="assets/icons.svg#i-mic-off"/></svg></button>
+            <button class="btn btn-primary" id="cc-send-btn"><svg class="ico"><use href="assets/icons.svg#i-send"/></svg></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== FRIENDS ===== -->
+      <section id="view-friends" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-users"/></svg> <span data-i18n-key="navFriends">Friends</span></div></div>
+        <p class="mini-note" data-i18n-key="friendsNote">You can only become friends with students from your class.</p>
+        <div class="manage-grid">
+          <div class="manage-card">
+            <div class="card-title"><span data-i18n-key="pendingRequests">Pending requests</span></div>
+            <div id="friends-requests-list"></div>
+          </div>
+          <div class="manage-card">
+            <div class="card-title"><span data-i18n-key="myFriends">My friends</span></div>
+            <div id="friends-list"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <div class="card-title"><span data-i18n-key="classmatesRequest">Classmates &mdash; send a request</span></div>
+          <div class="friends-search-wrap"><svg class="ico search-icon"><use href="assets/icons.svg#i-search"/></svg><input type="search" id="friends-search-input" placeholder="Search by name..." data-i18n-placeholder="friendsSearchPh"/></div>
+          <div id="friends-classmates-list"></div>
+        </div>
+      </section>
+
+      <!-- ===== DIRECT MESSAGES ===== -->
+      <section id="view-dm" class="section-view">
+        <div class="section-header"><div class="section-title" id="dm-header"><svg class="ico"><use href="assets/icons.svg#i-chat"/></svg> <span data-i18n-key="messagesTitle">Messages</span></div></div>
+        <div class="dm-layout">
+          <aside class="dm-sidebar" id="dm-friend-list"></aside>
+          <div class="dm-main">
+            <div class="chat-shell-messages" id="dm-messages"></div>
+            <div class="chat-shell-input">
+              <textarea id="dm-input" placeholder="Write a message..." data-i18n-placeholder="dmPh"></textarea>
+              <button class="btn btn-secondary" id="dm-img-btn" title="Send image (direct, not stored)"><svg class="ico"><use href="assets/icons.svg#i-image"/></svg></button>
+              <button class="btn btn-secondary" data-mic-btn title="Voice to text"><svg class="ico"><use href="assets/icons.svg#i-mic-off"/></svg></button>
+              <button class="btn btn-primary" id="dm-send-btn"><svg class="ico"><use href="assets/icons.svg#i-send"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== QUIZ ===== -->
+      <section id="view-quiz" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-sparkles"/></svg> <span data-i18n-key="monthlyQuiz">Monthly Quiz Campaigns</span></div></div>
+        <p class="mini-note" data-i18n-key="quizNote">A new quiz is held every month. Tap "Start Quiz" on an active quiz to begin.</p>
+        <div id="quiz-list"></div>
+      </section>
+
+      <!-- ===== KNOWLEDGE DUELS (FEATURE 4) ===== -->
+      <section id="view-duels" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-trophy"/></svg> <span>Knowledge Duels</span></div></div>
+        <p class="mini-note">Realtime 1v1 quiz duels with friends or random classmates — same questions, faster answers win. Win daily badges + XP.</p>
+        <div class="kd-toolbar">
+          <button class="btn btn-primary" id="kd-new-duel-btn"><svg class="ico"><use href="assets/icons.svg#i-trophy"/></svg> New duel</button>
+          <button class="btn btn-secondary" id="kd-rematch-btn"><svg class="ico"><use href="assets/icons.svg#i-flame"/></svg> Rematch</button>
+        </div>
+        <div id="kd-list"></div>
+        <div id="kd-arena"></div>
+
+        <div class="modal-overlay" id="kd-setup" role="dialog" aria-modal="true" aria-label="New duel">
+          <div class="modal-card">
+            <div class="modal-header">
+              <div class="modal-title"><svg class="ico"><use href="assets/icons.svg#i-trophy"/></svg> Create duel</div>
+              <button class="modal-close" id="kd-setup-close" aria-label="Close">×</button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label>Mode</label>
+                <select id="kd-setup-mode">
+                  <option value="friend">vs friend</option>
+                  <option value="random">vs random classmate</option>
+                </select>
+              </div>
+              <div class="form-group" id="kd-friend-wrap">
+                <label>Friend</label>
+                <select id="kd-setup-friend"></select>
+              </div>
+              <div class="form-group">
+                <label>Chapter</label>
+                <select id="kd-setup-chapter"></select>
+              </div>
+              <div class="form-group">
+                <label>Question preview</label>
+                <div id="kd-setup-preview"></div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" id="kd-create-duel-btn"><svg class="ico"><use href="assets/icons.svg#i-trophy"/></svg> Start duel</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== REVISION RACE (FEATURE 5) ===== -->
+      <section id="view-revision-race" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-flame"/></svg> <span>Revision Race</span></div></div>
+        <p class="mini-note">Every note you revise this week earns a point. Most revised notes in class wins weekly top-3 XP rewards.</p>
+        <div class="rr-tabs">
+          <button class="rr-tab active" data-tab="all">All school</button>
+          <button class="rr-tab" data-tab="class">My class</button>
+          <button class="rr-tab" data-tab="friends">Friends</button>
+        </div>
+        <div id="rr-board"></div>
+      </section>
+
+      <!-- ===== DAILY TARGET RACE + OFFLINE WARRIOR (FEATURE 6) ===== -->
+      <section id="view-target-race" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-target"/></svg> <span>Daily Target Race</span></div></div>
+        <p class="mini-note">Reach your daily focus target (85%+) before your classmates to win the daily race. Offline study minutes feed the Offline Warrior badge.</p>
+        <div id="tr-board"></div>
+        <div class="ow-status-card">
+          <div class="ow-status-head"><svg class="ico"><use href="assets/icons.svg#i-wifi-off"/></svg> Offline Warrior</div>
+          <div id="ow-status"></div>
+        </div>
+      </section>
+
+      <!-- ===== STUDY BUDDY (FEATURE 7) ===== -->
+      <section id="view-study-buddy" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-users"/></svg> <span>Study Buddy</span></div></div>
+        <p class="mini-note">Pair with a friend — share one pair-streak, get nightly accountability check-ins, and spend Streak Freezes when your buddy slips.</p>
+        <div id="sb-buddy-card"></div>
+        <div class="sb-panel-title"><svg class="ico"><use href="assets/icons.svg#i-megaphone"/></svg> Requests</div>
+        <div id="sb-requests"></div>
+        <div class="sb-panel-title"><svg class="ico"><use href="assets/icons.svg#i-users"/></svg> Invite a friend</div>
+        <div id="sb-candidates"></div>
+      </section>
+
+      <!-- ===== AI MIND MAP (PRD 14.20) ===== -->
+      <section id="view-mindmap" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-mindmap"/></svg> <span data-i18n-key="mindMapTitle">AI Mind Map</span></div></div>
+        <p class="mini-note" data-i18n-key="mindMapNote">Turn any note into a visual concept map. Pick a note, tap Generate, then drag, zoom and collapse nodes. Changes save automatically.</p>
+
+        <div class="mindmap-generate-panel">
+          <select id="mindmap-note-select" aria-label="Pick a note"></select>
+          <button class="btn btn-primary" id="mindmap-generate-btn" data-i18n-key="mindMapGenerate">Generate</button>
+        </div>
+
+        <div id="mindmap-status" role="status"></div>
+
+        <div id="mindmap-workspace" style="display:none">
+          <div class="mindmap-toolbar">
+            <button class="btn btn-secondary btn-sm" data-mm-action="expand-all" data-i18n-key="mindMapExpandAll" data-i18n-title="mindMapExpandAll">Expand all</button>
+            <button class="btn btn-secondary btn-sm" data-mm-action="collapse-all" data-i18n-key="mindMapCollapseAll" data-i18n-title="mindMapCollapseAll">Collapse all</button>
+            <button class="btn btn-secondary btn-sm" data-mm-action="edit-label" data-i18n-key="mindMapEditLabel" data-i18n-title="mindMapEditLabel">Rename</button>
+            <button class="btn btn-secondary btn-sm" data-mm-action="zoom-in" data-i18n-key="mindMapZoomIn" data-i18n-title="mindMapZoomIn">Zoom in</button>
+            <button class="btn btn-secondary btn-sm" data-mm-action="zoom-out" data-i18n-key="mindMapZoomOut" data-i18n-title="mindMapZoomOut">Zoom out</button>
+            <button class="btn btn-secondary btn-sm" data-mm-action="fit" data-i18n-key="mindMapFit" data-i18n-title="mindMapFit">Fit</button>
+            <button class="btn btn-secondary btn-sm" data-mm-action="export" data-i18n-key="mindMapExport" data-i18n-title="mindMapExport">Export</button>
+            <button class="btn btn-secondary btn-sm" data-mm-action="new" data-i18n-key="mindMapNew" data-i18n-title="mindMapNew">New</button>
+            <button class="btn btn-secondary btn-sm" data-mm-action="share" data-i18n-title="mindMapShare" title="Share with friends"><svg class="ico sm"><use href="assets/icons.svg#i-share"/></svg> Share</button>
+            <span id="mindmap-save-state"></span>
+            <span class="mindmap-toolbar-hint" data-i18n-key="mindMapHint">Drag to pan · drag a node to move · double-tap or +/− to collapse</span>
+          </div>
+
+          <div id="mindmap-canvas-wrap">
+            <canvas id="mindmap-canvas" aria-label="Mind map canvas"></canvas>
+            <div class="mindmap-canvas-empty">
+              <svg class="ico"><use href="assets/icons.svg#i-mindmap"/></svg>
+              <div><strong data-i18n-key="mindMapEmptyTitle">No mind map yet</strong></div>
+              <div data-i18n-key="mindMapEmptySub">Pick a note above and tap Generate to build your map.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mindmap-saved-title"><svg class="ico"><use href="assets/icons.svg#i-clock"/></svg> <span data-i18n-key="mindMapSavedTitle">Saved mind maps</span></div>
+        <div id="mindmap-saved-list"></div>
+        <div id="mindmap-shared-list" style="margin-top:16px"></div>
+      </section>
+
+      <!-- ===== CALENDAR (PRD 14.11) ===== -->
+      <section id="view-calendar" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-calendar"/></svg> <span data-i18n-key="calTitle">Calendar</span></div></div>
+
+        <div class="cal-toolbar">
+          <div class="cal-toolbar-nav">
+            <button class="btn btn-secondary btn-sm" id="cal-prev" aria-label="Previous">&larr;</button>
+            <button class="btn btn-secondary btn-sm" id="cal-today" data-i18n-key="calToday">Today</button>
+            <button class="btn btn-secondary btn-sm" id="cal-next" aria-label="Next">&rarr;</button>
+          </div>
+          <div class="cal-header-label" id="cal-header-label"></div>
+          <div class="cal-view-toggle">
+            <button class="btn btn-sm" data-cal-view="month" data-i18n-key="calMonth">Month</button>
+            <button class="btn btn-sm" data-cal-view="week" data-i18n-key="calWeek">Week</button>
+            <button class="btn btn-sm" data-cal-view="day" data-i18n-key="calDay">Day</button>
+          </div>
+          <button class="btn btn-primary btn-sm cal-add-btn" id="cal-add-btn"><svg class="ico"><use href="assets/icons.svg#i-plus"/></svg> <span data-i18n-key="calAddEvent">Add Event</span></button>
+        </div>
+
+        <div id="cal-grid"></div>
+      </section>
+
+      <!-- Event modal -->
+      <div id="cal-modal" class="cal-modal">
+        <div id="cal-modal-backdrop" style="position:absolute;inset:0"></div>
+        <div class="cal-modal-card">
+          <div class="cal-modal-head">
+            <div class="modal-title" id="cal-modal-label" data-i18n-key="calNewEvent">New Event</div>
+            <button class="btn btn-ghost" id="cal-modal-close"><svg class="ico"><use href="assets/icons.svg#i-x"/></svg></button>
+          </div>
+          <form id="cal-event-form">
+            <div class="cal-modal-body">
+              <div class="form-group">
+                <label for="cal-title" data-i18n-key="calTitleLabel">Event title</label>
+                <input type="text" id="cal-title" name="cal-title" required maxlength="120" />
+              </div>
+              <div class="form-group" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div>
+                  <label for="cal-start" data-i18n-key="calStart">Start</label>
+                  <input type="datetime-local" id="cal-start" name="cal-start" required />
+                </div>
+                <div>
+                  <label for="cal-end" data-i18n-key="calEnd">End</label>
+                  <input type="datetime-local" id="cal-end" name="cal-end" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="cal-location" data-i18n-key="calLocation">Location</label>
+                <input type="text" id="cal-location" name="cal-location" maxlength="200" />
+              </div>
+              <div class="form-group">
+                <label for="cal-source" data-i18n-key="calSource">Type</label>
+                <select id="cal-source" name="cal-source">
+                  <option value="manual" data-i18n-key="calSourceManual">Manual</option>
+                  <option value="exam" data-i18n-key="calSourceExam">Exam</option>
+                  <option value="planner" data-i18n-key="calSourcePlanner">Planner</option>
+                  <option value="class" data-i18n-key="calSourceClass">Class</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="cal-remind" data-i18n-key="calRemind">Remind me</label>
+                <select id="cal-remind" name="cal-remind">
+                  <option value="" data-i18n-key="calRemindOff">No reminder</option>
+                  <option value="1440" data-i18n-key="calRemind24h">24 hours before</option>
+                  <option value="60" data-i18n-key="calRemind1h">1 hour before</option>
+                </select>
+              </div>
+            </div>
+            <div class="cal-modal-foot">
+              <button type="button" class="btn btn-danger btn-sm" id="cal-event-delete" data-i18n-key="calDelete" style="display:none">Delete</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="cal-modal-close2" data-i18n-key="cancel">Cancel</button>
+              <button type="submit" class="btn btn-primary btn-sm" id="cal-event-save" data-i18n-key="calSave">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ===== SHARED NOTES ===== -->
+      <section id="view-shared-notes" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-share"/></svg> <span data-i18n-key="sharedWithMe">Shared with me</span></div></div>
+        <p class="mini-note" data-i18n-key="sharedNote">Notes shared by friends. With edit access you can add your own writing below (previous writing is not erased).</p>
+        <div id="shared-notes-list"></div>
+      </section>
+
+      <!-- ===== HELP / SUPPORT ===== -->
+      <section id="view-help" class="section-view">
+        <div class="section-header"><div class="section-title"><svg class="ico"><use href="assets/icons.svg#i-help"/></svg> <span data-i18n-key="helpSupport">Help &amp; Support</span></div></div>
+        <div class="manage-grid">
+          <div class="manage-card">
+            <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-help"/></svg> <span data-i18n-key="faqTitle">FAQ</span></div>
+            <div class="faq" style="margin-top:10px">
+              <div class="faq-item"><button class="faq-q" data-i18n-key="faq1q">How does the 14-day free trial work?<svg class="ico"><use href="assets/icons.svg#i-chevron-down"/></svg></button>
+                <div class="faq-a" data-i18n-key="faq1a">You get full AI features free for 14 days after registering. When the trial ends, add your own Gemini/Groq API key in Settings or subscribe.</div></div>
+              <div class="faq-item"><button class="faq-q" data-i18n-key="faq2q">Where can I get a free Gemini API key?<svg class="ico"><use href="assets/icons.svg#i-chevron-down"/></svg></button>
+                <div class="faq-a" data-i18n-key="faq2a">Visit aistudio.google.com/app/apikey &mdash; log in with your Google account and tap "Create API key". Paste it in Settings.</div></div>
+              <div class="faq-item"><button class="faq-q" data-i18n-key="faq3q">Can other students see my data?<svg class="ico"><use href="assets/icons.svg#i-chevron-down"/></svg></button>
+                <div class="faq-a" data-i18n-key="faq3a">No. Every student&rsquo;s notes/tasks/syllabus are stored in their own secure cloud path (users/{your-uid}/notes); no one else can access them.</div></div>
+              <div class="faq-item"><button class="faq-q" data-i18n-key="faq4q">What happens offline?<svg class="ico"><use href="assets/icons.svg#i-chevron-down"/></svg></button>
+                <div class="faq-a" data-i18n-key="faq4a">The app still opens offline &mdash; an "Offline Mode" badge appears on top. You can add new notes; when the internet returns they sync automatically. AI/Chat do not work offline.</div></div>
+              <div class="faq-item"><button class="faq-q" data-i18n-key="faq5q">How does the AI Question generator work?<svg class="ico"><use href="assets/icons.svg#i-chevron-down"/></svg></button>
+                <div class="faq-a" data-i18n-key="faq5a">Once questions are generated for a Class+Subject+Chapter, they are cached. If another student requests the same chapter, they see the cached set. Tap "Generate New" to create a fresh batch.</div></div>
+              <div class="faq-item"><button class="faq-q" data-i18n-key="faq6q">How do I change my password?<svg class="ico"><use href="assets/icons.svg#i-chevron-down"/></svg></button>
+                <div class="faq-a" data-i18n-key="faq6a">Open Settings &rarr; Profile &rarr; "Change Password". Enter your current password and a new one to update it securely.</div></div>
+              <div class="faq-item"><button class="faq-q">Privacy &amp; cookies<svg class="ico"><use href="assets/icons.svg#i-chevron-down"/></svg></button>
+                <div class="faq-a">Your password is never stored on this device. All study data lives in your own secure cloud space (offline: IndexedDB on this device only) and syncs automatically when you are back online. This app sets no tracking cookies — Firebase keeps authentication sessions in secure, HttpOnly storage handled by the browser. In public/shared devices always log out after use.</div></div>
+            </div>
+          </div>
+
+          <div class="manage-card">
+            <div class="card-title"><svg class="ico"><use href="assets/icons.svg#i-chat"/></svg> <span data-i18n-key="liveSupportChat">Live Support Chat</span></div>
+            <p class="mini-note" data-i18n-key="liveSupportNote">Click the purple bubble at the bottom right &rarr; go to the Support tab. The Support team sees your message and replies.</p>
+            <button class="btn btn-secondary btn-block" onclick="document.getElementById('chat-fab').click(); setTimeout(()=>document.querySelector('[data-chat-mode=support]')?.click(),200)">
+              <svg class="ico"><use href="assets/icons.svg#i-chat"/></svg> <span data-i18n-key="openSupportChat">Open support chat</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ===== Footer ===== -->
+  <footer id="app-footer" class="app-footer"></footer>
+
+  <!-- ===== Bottom nav (mobile) ===== -->
+  <nav class="bottom-nav">
+    <button class="bottom-nav-item active" data-section="dashboard"><svg class="ico"><use href="assets/icons.svg#i-dashboard"/></svg><span data-i18n-key="navHome">Home</span></button>
+    <button class="bottom-nav-item" data-section="notes"><svg class="ico"><use href="assets/icons.svg#i-notes"/></svg><span data-i18n-key="navNotes">Notes</span></button>
+    <button class="bottom-nav-item" data-section="revision"><svg class="ico"><use href="assets/icons.svg#i-clock"/></svg><span data-i18n-key="navRevise">Revise</span></button>
+    <button class="bottom-nav-item" data-section="leaderboard"><svg class="ico"><use href="assets/icons.svg#i-flame"/></svg><span data-i18n-key="navRank">Rank</span></button>
+    <button class="bottom-nav-item" data-section="settings"><svg class="ico"><use href="assets/icons.svg#i-settings"/></svg><span data-i18n-key="navMore">More</span></button>
+  </nav>
+
+  <div id="drawer-scrim" class="drawer-scrim" aria-hidden="true"></div>
+  <aside id="drawer" class="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <div class="drawer-title"><svg class="ico"><use href="assets/icons.svg#i-brain"/></svg> <span>Second Brain</span></div>
+      <button type="button" class="btn-icon" id="drawer-close" title="Close menu" aria-label="Close menu"><svg class="ico"><use href="assets/icons.svg#i-x"/></svg></button>
+    </div>
+    <nav id="drawer-nav" class="drawer-nav"></nav>
+  </aside>
+
+  <button id="note-fab" class="note-fab" title="Quick note"><svg class="ico"><use href="assets/icons.svg#i-plus"/></svg></button>
+  <button id="chat-fab" class="chat-fab" title="Chat"><svg class="ico"><use href="assets/icons.svg#i-chat"/></svg></button>
+
+  <div id="chat-hub" class="chat-hub" aria-hidden="true">
+    <div class="chat-hub-card">
+      <div class="chat-hub-head">
+        <div>
+          <div class="chat-hub-title" data-i18n-key="chatOptions">Chat options</div>
+          <div class="chat-hub-sub" data-i18n-key="aiChatSub">AI answers based on your notes</div>
+        </div>
+        <button type="button" data-hub-close>&times;</button>
+      </div>
+      <div class="chat-hub-grid">
+        <button class="chat-hub-btn" data-hub-go="ai">
+          <div class="ico"><svg><use href="assets/icons.svg#i-robot"/></svg></div>
+          <div><div class="chat-hub-btn-title" data-i18n-key="aiChat">AI Chat</div><div class="chat-hub-btn-sub" data-i18n-key="aiChatSub">AI answers based on your notes</div></div>
+        </button>
+        <button class="chat-hub-btn" data-hub-go="support">
+          <div class="ico"><svg><use href="assets/icons.svg#i-help"/></svg></div>
+          <div><div class="chat-hub-btn-title" data-i18n-key="supportChat">Support Chat</div><div class="chat-hub-btn-sub" data-i18n-key="supportChatSub">Chat directly with the Support Team</div></div>
+        </button>
+        <button class="chat-hub-btn" data-hub-go="community">
+          <div class="ico"><svg><use href="assets/icons.svg#i-users"/></svg></div>
+          <div><div class="chat-hub-btn-title" data-i18n-key="classCommunityChat">Class Community</div><div class="chat-hub-btn-sub" data-i18n-key="classCommunityChatSub">Group chat for your class</div></div>
+        </button>
+        <button class="chat-hub-btn" data-hub-go="friends">
+          <div class="ico"><svg><use href="assets/icons.svg#i-friends"/></svg></div>
+          <div><div class="chat-hub-btn-title" data-i18n-key="friendsDmChat">Friends DM</div><div class="chat-hub-btn-sub" data-i18n-key="friendsDmChatSub">Private messages with friends</div></div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="chat-panel" class="chat-panel" aria-hidden="true">
+    <div class="chat-header">
+      <div class="chat-header-title"><svg class="ico"><use href="assets/icons.svg#i-chat"/></svg> <span data-i18n-key="chatTitle">Chat</span></div>
+      <button id="chat-close-btn" class="btn btn-ghost" aria-label="Close chat"><svg class="ico"><use href="assets/icons.svg#i-x"/></svg></button>
+    </div>
+    <div class="chat-tabs">
+      <button class="chat-tab active" data-chat-mode="ai" data-i18n-key="chatTabAi">AI</button>
+      <button class="chat-tab" data-chat-mode="support" data-i18n-key="chatTabSupport">Support Chat</button>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="chat-msg system" data-i18n-key="chatSystemMsg">How are you? Choose AI or Support from the tabs above and send a message.</div>
+    </div>
+    <div class="chat-input-area">
+      <input id="chat-input" class="chat-input" type="text" placeholder="Write a message..." data-i18n-placeholder="chatInputPh" />
+      <button id="chat-send-btn" class="chat-send" aria-label="Send message"><svg class="ico"><use href="assets/icons.svg#i-send"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- ============== Note Detail Modal ============== -->
+<div id="detail-modal" class="modal-overlay">
+  <div class="modal lg detail-modal">
+    <div class="modal-header detail-header">
+      <div class="detail-header-left">
+        <div id="detail-subject-badge" class="note-detail-subject"></div>
+        <div class="modal-title detail-title" id="detail-title" data-i18n-key="noteDetailTitle">Note</div>
+      </div>
+      <button class="modal-close" data-close-modal="detail-modal"><svg class="ico"><use href="assets/icons.svg#i-x"/></svg></button>
+    </div>
+    <div class="modal-body detail-body">
+      <div class="note-detail-content" id="detail-content"></div>
+      <div id="detail-images" class="note-img-previews" style="margin-top:8px"></div>
+      <div class="note-detail-meta"><span id="detail-created"></span></div>
+      <div class="detail-actions-grid">
+        <button class="detail-action-btn detail-action-ai" id="explain-ai-btn"><svg class="ico"><use href="assets/icons.svg#i-ai"/></svg> <span data-i18n-key="explainWithAi">Explain with AI</span></button>
+        <div class="detail-action-tts-group">
+          <button class="detail-action-btn detail-action-tts" id="detail-tts-btn"><svg class="ico"><use href="assets/icons.svg#i-mic"/></svg> <span data-i18n-key="listen">Listen</span></button>
+          <div class="tts-speed-control" id="tts-speed-control">
+            <svg class="ico sm"><use href="assets/icons.svg#i-clock"/></svg>
+            <input type="range" id="detail-tts-speed" min="0.5" max="2" step="0.05" value="0.9" class="tts-speed-slider"/>
+            <span class="tts-speed-val" id="detail-tts-speed-val">0.9x</span>
+          </div>
+        </div>
+        <button class="detail-action-btn" id="detail-quiz-btn"><svg class="ico"><use href="assets/icons.svg#i-sparkles"/></svg> <span data-i18n-key="makeQuiz">Make Quiz</span></button>
+        <button class="detail-action-btn" id="detail-mindmap-btn"><svg class="ico"><use href="assets/icons.svg#i-mindmap"/></svg> <span data-i18n-key="mindMapBtn">Mind Map</span></button>
+        <button class="detail-action-btn" id="detail-visual-btn"><svg class="ico"><use href="assets/icons.svg#i-eye"/></svg> Visual Prompt</button>
+        <button class="detail-action-btn" id="detail-image-btn"><svg class="ico"><use href="assets/icons.svg#i-image"/></svg> AI Image</button>
+      </div>
+      <div id="ai-area"></div>
+    </div>
+    <div class="modal-footer detail-footer">
+      <button class="btn btn-success btn-sm" id="revise-btn"><svg class="ico"><use href="assets/icons.svg#i-check"/></svg> <span data-i18n-key="markRevised">Mark Revised</span></button>
+      <button class="btn btn-danger btn-sm" id="detail-delete-btn"><svg class="ico"><use href="assets/icons.svg#i-trash"/></svg> <span data-i18n-key="delete">Delete</span></button>
+      <button class="btn btn-secondary btn-sm" id="detail-share-btn" data-needs-online><svg class="ico"><use href="assets/icons.svg#i-share"/></svg> <span data-i18n-key="shareBtn">Share</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ============== Share Note Modal ============== -->
+<div id="share-note-modal" class="modal-overlay">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <div class="modal-title" style="color:var(--accent)"><svg class="ico"><use href="assets/icons.svg#i-share"/></svg> <span data-i18n-key="shareBtn">Share Note</span></div>
+      <button class="modal-close" data-close-modal="share-note-modal"><svg class="ico"><use href="assets/icons.svg#i-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p class="mini-note" style="margin-bottom:10px"><strong id="share-note-title"></strong> — friend-কে view/edit পারমিশন দিন</p>
+      <div class="form-group">
+        <label>Friend</label>
+        <select id="share-friend-pick" class="form-control"></select>
+      </div>
+      <div class="form-group">
+        <label>Permission</label>
+        <select id="share-access" class="form-control">
+          <option value="view">View only</option>
+          <option value="edit">Edit (append-only)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label><svg class="ico sm"><use href="assets/icons.svg#i-tag"/></svg> Mention friends <span style="font-weight:400;font-size:.8rem;color:var(--text3)">(তারা notification পাবে)</span></label>
+        <div id="share-mention-friends" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close-modal="share-note-modal">Cancel</button>
+      <button class="btn btn-primary" id="share-note-confirm-btn"><svg class="ico"><use href="assets/icons.svg#i-share"/></svg> Share</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============== PAYMENT MODAL (UddoktaPay auto + manual bKash/Nagad) ============== -->
+<div id="payment-modal" class="modal-overlay" role="dialog" aria-label="Subscribe">
+  <div class="modal-card" style="max-width:460px">
+    <div class="modal-header">
+      <div class="modal-title"><svg class="ico"><use href="assets/icons.svg#i-credit"/></svg> Subscribe</div>
+      <button type="button" class="modal-close" data-close-modal="payment-modal" aria-label="Close"><svg class="ico"><use href="assets/icons.svg#i-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div id="selected-pkg-summary"></div>
+
+      <!-- Fast auto payment (UddoktaPay) -->
+      <button type="button" class="btn btn-primary btn-block btn-lg" id="uddoktapay-pay-btn" style="margin-top:12px;background:var(--brand-grad)">
+        <svg class="ico"><use href="assets/icons.svg#i-credit"/></svg> দ্রুত পেমেন্ট (bKash / Nagad / Rocket / Card)
+      </button>
+      <p class="mini-note" style="text-align:center">UddoktaPay দিয়ে পেমেন্ট করলে প্ল্যান সাথে সাথে অটো-অ্যাক্টিভ হবে — কোনো অপেক্ষা নেই।</p>
+
+      <div class="pay-divider"><span>অথবা ম্যানুয়াল পেমেন্ট</span></div>
+
+      <!-- Manual flow (existing admin-verified bKash/Nagad) -->
+      <div id="pay-method-list" class="pay-method-list"></div>
+      <div id="pay-method-instructions"></div>
+      <div class="form-group" style="margin-top:10px">
+        <label for="pay-trxid">TRX ID</label>
+        <input id="pay-trxid" placeholder="Sender message-এর Transaction ID"/>
+      </div>
+      <div class="form-group">
+        <label for="pay-sender">Sender number</label>
+        <input id="pay-sender" placeholder="যে number থেকে পাঠিয়েছেন"/>
+      </div>
+      <div class="form-group">
+        <label for="pay-promo">Promo code <small style="text-transform:none">(ঐচ্ছিক)</small></label>
+        <input id="pay-promo" placeholder="Promo code থাকলে দিন"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close-modal="payment-modal">Cancel</button>
+      <button class="btn btn-primary" id="submit-payment-btn"><svg class="ico"><use href="assets/icons.svg#i-check"/></svg> Submit payment request</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============== ADD PROJECT MODAL ============== -->
+<div id="add-project-modal" class="modal-overlay">
+  <div class="modal-card" style="max-width:460px">
+    <div class="modal-header">
+      <div class="modal-title" style="color:var(--accent)"><svg class="ico"><use href="assets/icons.svg#i-folder"/></svg> New Project</div>
+      <button class="modal-close" data-close-modal="add-project-modal"><svg class="ico"><use href="assets/icons.svg#i-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Project Name</label>
+        <input id="project-name" placeholder="My awesome project"/>
+      </div>
+      <div class="form-group">
+        <label>Description <small style="color:var(--text3);font-weight:400">(optional)</small></label>
+        <textarea id="project-desc" rows="3" placeholder="What is this project about?"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="project-status">
+          <option value="planning">📋 Planning</option>
+          <option value="active">🚀 Active</option>
+          <option value="on-hold">⏸ On Hold</option>
+          <option value="completed">✅ Completed</option>
+          <option value="archived">📦 Archived</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Color</label>
+        <input type="hidden" id="project-color" value="#6366f1"/>
+        <div class="color-swatches" id="add-project-swatches"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close-modal="add-project-modal">Cancel</button>
+      <button class="btn btn-primary" id="save-project-btn"><svg class="ico"><use href="assets/icons.svg#i-add"/></svg> Create Project</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============== EDIT PROJECT MODAL ============== -->
+<div id="edit-project-modal" class="modal-overlay">
+  <div class="modal-card" style="max-width:460px">
+    <div class="modal-header">
+      <div class="modal-title" style="color:var(--accent)"><svg class="ico"><use href="assets/icons.svg#i-settings"/></svg> Edit Project</div>
+      <button class="modal-close" data-close-modal="edit-project-modal"><svg class="ico"><use href="assets/icons.svg#i-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-project-id"/>
+      <div class="form-group">
+        <label>Project Name</label>
+        <input id="edit-project-name" placeholder="Project name"/>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="edit-project-desc" rows="3" placeholder="Description"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="edit-project-status">
+          <option value="planning">📋 Planning</option>
+          <option value="active">🚀 Active</option>
+          <option value="on-hold">⏸ On Hold</option>
+          <option value="completed">✅ Completed</option>
+          <option value="archived">📦 Archived</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Color</label>
+        <input type="hidden" id="edit-project-color" value="#6366f1"/>
+        <div class="color-swatches" id="edit-project-swatches"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close-modal="edit-project-modal">Cancel</button>
+      <button class="btn btn-primary" id="save-edit-project-btn"><svg class="ico"><use href="assets/icons.svg#i-check"/></svg> Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============== PROJECT DETAIL MODAL ============== -->
+<div id="project-detail-modal" class="modal-overlay">
+  <div class="modal lg project-detail">
+    <div class="modal-header pd-header">
+      <div class="pd-color-indicator" id="pd-color-indicator"></div>
+      <div class="pd-header-info">
+        <div class="modal-title pd-name" id="pd-name">Project</div>
+        <div class="pd-meta">
+          <span id="pd-status"></span>
+          <span id="pd-tasks">0 tasks</span>
+          <span id="pd-notes">0 notes</span>
+          <span id="pd-date"></span>
+        </div>
+      </div>
+      <button class="modal-close" data-close-modal="project-detail-modal"><svg class="ico"><use href="assets/icons.svg#i-x"/></svg></button>
+    </div>
+    <div class="modal-body pd-body">
+      <div class="pd-section">
+        <div class="pd-section-title">Description</div>
+        <div id="pd-desc" style="font-size:.88rem;color:var(--text2);white-space:pre-wrap"></div>
+      </div>
+      <div class="pd-section">
+        <div class="pd-section-title"><svg class="ico sm"><use href="assets/icons.svg#i-notes"/></svg> Notes</div>
+        <div class="pd-list" id="pd-notes-list"></div>
+      </div>
+      <div class="pd-section">
+        <div class="pd-section-title"><svg class="ico sm"><use href="assets/icons.svg#i-tasks"/></svg> Tasks</div>
+        <div class="pd-list" id="pd-tasks-list"></div>
+      </div>
+    </div>
+    <div class="modal-footer pd-footer">
+      <button class="btn btn-secondary btn-sm" id="pd-edit-btn"><svg class="ico"><use href="assets/icons.svg#i-settings"/></svg> Edit</button>
+      <button class="btn btn-danger btn-sm" id="pd-delete-btn"><svg class="ico"><use href="assets/icons.svg#i-trash"/></svg> Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+  // Firebase backend config — same project as the user app.
+  // Firebase console → Project settings → General → Your apps → SDK setup.
+  window.__FIREBASE__ = {
+    apiKey: 'AIzaSyB_0VqTS35mbdv97m_hGBLMV9hFyZA61a8',
+    authDomain: 'second-brain-64aa3.firebaseapp.com',
+    projectId: 'second-brain-64aa3',
+    storageBucket: 'second-brain-64aa3.firebasestorage.app',
+    messagingSenderId: '637554699021',
+    appId: '1:637554699021:web:b69f394d66df35d0dede44',
+    measurementId: 'G-T07PFYZNK5'
+  };
+</script>
+<script type="module" src="js/app.js"></script>
+<script>
+(function () {
+  const sk = document.getElementById('app-skeleton');
+  let done = false;
+
+  const hideSkeleton = () => {
+    if (done) return;
+    done = true;
+    // CRITICAL for offline: also drop `app-loading` so the auth gate /
+    // app shell is never left hidden behind an invisible loader. Without
+    // this, a stalled module (offline first visit) = permanent blank page.
+    document.body.classList.remove('app-loading');
+    if (sk){
+      sk.classList.add('is-hidden');
+      setTimeout(() => sk.remove(), 320);
+    }
+  };
+
+  const observer = new MutationObserver(() => {
+    if (!document.body.classList.contains('app-loading')) hideSkeleton();
+  });
+  observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+  window.addEventListener('load', hideSkeleton, { once: true });
+  setTimeout(hideSkeleton, 6000);
+})();
+</script>
+</body>
+</html>

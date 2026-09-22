@@ -1,0 +1,346 @@
+{
+  "rules": {
+    "users": {
+      ".read": "auth.token.email == 'fztech166@gmail.com'",
+      ".write": "auth.token.email == 'fztech166@gmail.com'",
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || auth.token.email == 'fztech166@gmail.com')",
+        ".write": "(auth != null && auth.uid == $uid && root.child('users/' + $uid + '/banned').val() !== true) || auth.token.email == 'fztech166@gmail.com'"
+      }
+    },
+
+    "refs": {
+      "$ref": {
+        "$uid": {
+          ".read": "auth != null",
+          ".write": "(auth != null && newData.child('uid').val() == auth.uid && newData.child('referredBy').exists()) || auth.token.email == 'fztech166@gmail.com'"
+        }
+      }
+    },
+
+    "public_profiles": {
+      ".read": "auth != null",
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "(auth != null && auth.uid == $uid && root.child('users/' + $uid + '/banned').val() !== true) || auth.token.email == 'fztech166@gmail.com'"
+      }
+    },
+
+    "x": {
+      "users": {
+        "$uid": {
+          ".read": "auth != null && (auth.uid == $uid || auth.token.email == 'fztech166@gmail.com')",
+          "shared_with_me": {
+            "$id": {
+              ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && (auth.uid == $uid || newData.child('sharedByUid').val() == auth.uid))"
+            }
+          },
+          "shared_mindmaps": {
+            "$id": {
+              ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && (auth.uid == $uid || newData.child('sharedByUid').val() == auth.uid))"
+            }
+          },
+          "shared_resources": {
+            "$id": {
+              ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && (auth.uid == $uid || newData.child('sharedByUid').val() == auth.uid))"
+            }
+          },
+          "notifications": {
+            "$id": {
+              ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && (auth.uid == $uid || newData.child('fromUid').val() == auth.uid))"
+            }
+          },
+          "$sub": {
+            "$doc": {
+              ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && auth.uid == $uid && root.child('users/' + $uid + '/banned').val() !== true)"
+            }
+          }
+        }
+      },
+      "class_communities": {
+        "$ck": {
+          "members": {
+            "$memberUid": {
+              ".read": "auth != null",
+              ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && auth.uid == $memberUid)"
+            }
+          },
+          "messages": {
+            "$msg": {
+              ".read": "auth != null",
+              ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && newData.child('uid').val() == auth.uid)"
+            }
+          }
+        }
+      },
+      "system": {
+        "announcements_queue": {
+          "pending": {
+            "$doc": {
+              ".read": "auth != null",
+              ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && data.exists() && newData.child('sentAt').exists())"
+            }
+          }
+        }
+      }
+    },
+
+    "own": {
+      "$col": {
+        ".read": "auth.token.email == 'fztech166@gmail.com'",
+        "$uid": {
+          ".read": "auth != null && (auth.uid == $uid || auth.token.email == 'fztech166@gmail.com')",
+          "$id": {
+            ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && auth.uid == $uid && root.child('users/' + $uid + '/banned').val() !== true && newData.child('uid').val() == auth.uid)"
+          }
+        }
+      }
+    },
+
+    "dm": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || auth.token.email == 'fztech166@gmail.com')",
+        "$pairId": {
+          "$id": {
+            ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && ((auth.uid == $uid && (newData.child('uids').hasChild(auth.uid) || data.child('uids').hasChild(auth.uid))) || (newData.child('fromUid').val() == auth.uid && newData.child('toUid').val() == $uid)))"
+          }
+        }
+      }
+    },
+
+    "direct_messages": {
+      "$id": {
+        ".read": "auth.token.email == 'fztech166@gmail.com' || (auth != null && (data.child('uids').hasChild(auth.uid) || data.child('fromUid').val() == auth.uid || data.child('toUid').val() == auth.uid))",
+        ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && !data.exists() && newData.child('uids').hasChild(auth.uid) && newData.child('fromUid').val() == auth.uid)"
+      }
+    },
+
+    "duel": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || auth.token.email == 'fztech166@gmail.com')",
+        "$id": {
+          ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && (newData.child('playerIds').hasChild(auth.uid) || data.child('playerIds').hasChild(auth.uid)))"
+        }
+      }
+    },
+
+    "duels": {
+      "$id": {
+        ".read": "auth.token.email == 'fztech166@gmail.com' || (auth != null && data.child('playerIds').hasChild(auth.uid))",
+        ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && (newData.child('playerIds').hasChild(auth.uid) || data.child('playerIds').hasChild(auth.uid)))"
+      }
+    },
+
+    "fs": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || auth.token.email == 'fztech166@gmail.com')",
+        "$id": {
+          ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && (newData.child('uids').hasChild(auth.uid) && newData.child('uids').hasChild($uid)) || (data.child('uids').hasChild(auth.uid) && data.child('uids').hasChild($uid)))"
+        }
+      }
+    },
+
+    "friendships": {
+      "$id": {
+        ".read": "auth.token.email == 'fztech166@gmail.com'",
+        ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && ((!data.exists() && newData.child('uids').hasChild(auth.uid)) || data.child('uids').hasChild(auth.uid)))"
+      }
+    },
+
+    "fr": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || auth.token.email == 'fztech166@gmail.com')",
+        "$id": {
+          ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && (newData.child('fromUid').val() == auth.uid || data.child('fromUid').val() == auth.uid || data.child('toUid').val() == auth.uid))"
+        }
+      }
+    },
+
+    "friend_requests": {
+      "$id": {
+        ".read": "auth.token.email == 'fztech166@gmail.com'",
+        ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && (newData.child('fromUid').val() == auth.uid || data.child('fromUid').val() == auth.uid || data.child('toUid').val() == auth.uid))"
+      }
+    },
+
+    "br": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || auth.token.email == 'fztech166@gmail.com')",
+        "$id": {
+          ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && (newData.child('fromUid').val() == auth.uid || data.child('fromUid').val() == auth.uid || data.child('toUid').val() == auth.uid))"
+        }
+      }
+    },
+
+    "buddy_requests": {
+      "$id": {
+        ".read": "auth.token.email == 'fztech166@gmail.com'",
+        ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && (newData.child('fromUid').val() == auth.uid || data.child('fromUid').val() == auth.uid || data.child('toUid').val() == auth.uid))"
+      }
+    },
+
+    "w": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || auth.token.email == 'fztech166@gmail.com')",
+        "$id": {
+          ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && (newData.child('uids').hasChild(auth.uid) || data.child('uids').hasChild(auth.uid)))"
+        }
+      }
+    },
+
+    "webrtc": {
+      "$id": {
+        ".read": "auth.token.email == 'fztech166@gmail.com' || (auth != null && data.child('uids').hasChild(auth.uid))",
+        ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && (newData.child('uids').hasChild(auth.uid) || data.child('uids').hasChild(auth.uid)))"
+      }
+    },
+
+    "system": {
+      "$doc": {
+        ".read": "true",
+        ".write": "auth.token.email == 'fztech166@gmail.com'"
+      }
+    },
+
+    "system_private": {
+      "$doc": {
+        ".read": "auth.token.email == 'fztech166@gmail.com'",
+        ".write": "auth.token.email == 'fztech166@gmail.com'"
+      }
+    },
+
+    "system_client": {
+      "$doc": {
+        ".read": "auth != null",
+        ".write": "auth.token.email == 'fztech166@gmail.com'"
+      }
+    },
+
+    "packages": {
+      ".read": "true",
+      "$pkg": {
+        ".read": "true",
+        ".write": "auth.token.email == 'fztech166@gmail.com'"
+      }
+    },
+
+    "admin_features": {
+      ".read": "true",
+      "$id": {
+        ".read": "true",
+        ".write": "auth.token.email == 'fztech166@gmail.com'"
+      }
+    },
+
+    "admin_notifications": {
+      ".read": "auth != null",
+      "$id": {
+        ".read": "auth != null",
+        ".write": "auth.token.email == 'fztech166@gmail.com'"
+      }
+    },
+
+    "question_banks": {
+      ".read": "auth != null",
+      "$id": {
+        ".read": "auth != null",
+        ".write": "auth.token.email == 'fztech166@gmail.com'"
+      }
+    },
+
+    "quiz_campaigns": {
+      ".read": "true",
+      "$id": {
+        ".read": "true",
+        ".write": "auth.token.email == 'fztech166@gmail.com'"
+      }
+    },
+
+    "schools": {
+      ".read": "true",
+      "$id": {
+        ".read": "true",
+        ".write": "auth.token.email == 'fztech166@gmail.com'"
+      }
+    },
+
+    "school_requests": {
+      ".read": "auth.token.email == 'fztech166@gmail.com'",
+      "$id": {
+        ".read": "auth.token.email == 'fztech166@gmail.com'",
+        ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && newData.child('requestedByUid').val() == auth.uid && newData.child('status').val() == 'pending')"
+      }
+    },
+
+    "resources": {
+      ".read": "auth != null",
+      "$id": {
+        ".read": "auth != null",
+        ".write": "auth.token.email == 'fztech166@gmail.com'"
+      }
+    },
+
+    "resource_requests": {
+      ".read": "auth.token.email == 'fztech166@gmail.com'",
+      "$id": {
+        ".read": "auth.token.email == 'fztech166@gmail.com'",
+        ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && !data.exists() && newData.child('uid').val() == auth.uid && newData.child('status').val() == 'pending')"
+      }
+    },
+
+    "syllabus_questions": {
+      ".read": "auth != null",
+      "$id": {
+        ".read": "auth != null",
+        ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && newData.exists())"
+      }
+    },
+
+    "study_groups": {
+      ".read": "auth != null",
+      "$id": {
+        ".read": "auth != null",
+        ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && (newData.child('createdBy').val() == auth.uid || data.exists()))"
+      }
+    },
+
+    "class_communities": {
+      ".read": "auth != null",
+      "$ck": {
+        ".read": "auth != null",
+        ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && newData.exists())"
+      }
+    },
+
+    "referrals": {
+      ".read": "true",
+      "$code": {
+        ".read": "true",
+        ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && newData.child('uid').val() == auth.uid)"
+      }
+    },
+
+    "user_ids": {
+      ".read": "true",
+      "$id": {
+        ".read": "true",
+        ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && newData.child('uid').val() == auth.uid)"
+      }
+    },
+
+    "password_reset_requests": {
+      ".read": "auth.token.email == 'fztech166@gmail.com'",
+      "$id": {
+        ".read": "auth.token.email == 'fztech166@gmail.com'",
+        ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && !data.exists())"
+      }
+    },
+
+    "devices": {
+      "$id": {
+        ".read": "auth.token.email == 'fztech166@gmail.com' || (auth != null && data.child('uids').hasChild(auth.uid))",
+        ".write": "auth.token.email == 'fztech166@gmail.com' || (auth != null && newData.child('uids').hasChild(auth.uid))"
+      }
+    }
+  }
+}

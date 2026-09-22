@@ -1,0 +1,605 @@
+rules_version = '2';
+
+// Firestore security rules — copy/paste into Firebase console → Firestore → Rules.
+//
+// Goals:
+//   1. Each student can only read/write THEIR OWN data.
+//   2. The shared AI questions cache is readable by everyone but writable
+//      only by signed-in users.
+//   3. System settings + packages are readable by everyone; writable only
+//      by configured admin emails (edit ADMIN_EMAILS below).
+//   4. Support chat: a user can read/write only their own thread; admins
+//      can read/write everything.
+//   5. Payment requests: user can create their own; admin can read/update.
+//   6. Social: friend requests, friendships, DMs, class communities,
+//      quizzes, schools, etc.
+//   7. NEXUS: users/{uid}/active_syllabus is owner-private; the shared
+//      textbook_db reference database is read-only for users, admin-only
+//      for writes (see the textbook_db rule below).
+//   8. PLAN GATE (monetization): after the free trial ends, premium feature
+//      writes are blocked from the rules level — a user may still add notes,
+//      buy a package (payment_requests), contact support and use their own
+//      notes data, but everything else (tasks, revision, mindmaps, focus,
+//      social, duels, quizzes, AI question cache, ...) requires an active
+//      package or referral reward. See hasActivePlan() below; the admin
+//      approves a purchase by updating users/{uid} with plan/planEnd/type.
+//      NOTE: the in-app Admin Panel must push the same rules file (a deploy
+//      button is included there) — edit ONLY here, never in the console.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // === ADD YOUR ADMIN EMAILS HERE ===
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email in [
+        'fztech166@gmail.com'
+      ];
+    }
+    function signedIn() { return request.auth != null; }
+    function isBanned(uid) {
+      let doc = get(/databases/$(database)/documents/users/$(uid));
+      // doc may not exist yet (new user registering) and existing docs may
+      // not have the `banned` field — both cases must NOT throw, or every
+      // non-admin write (settings, notes, ...) would be denied.
+      return doc != null && 'banned' in doc.data && doc.data.banned == true;
+    }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid && !isBanned(uid); }
+
+    // === Plan gate (monetization) ===
+    // After the free trial, every premium feature requires an active package
+    // (or a referral reward). "Active" = the profile doc says so:
+    //   trialEnd > now                       → free trial running
+    //   rewardEnd > now                      → referral reward period
+    //   plan in ['pro','paid'] and
+    //   (no planEnd or planEnd > now)        → admin-approved package
+    // Admin approval for a package = updating users/{uid} with
+    // { plan:'paid', planEnd: <epoch ms>, packageId, type, aiPlan, credits }.
+    // Writes to premium collections (tasks, syllabus/revision, mindmaps,
+    // study_logs, social, duels, quiz, focus sessions, ...) are then gated on
+    // this function. Notes (+ profile, settings, payment requests, support
+    // chat, referrals) stay open so free users can still take notes and
+    // subscribe. Reads of a user's OWN data are never blocked.
+    function hasActivePlan(uid) {
+      let doc = get(/databases/$(database)/documents/users/$(uid));
+      let d = doc != null ? doc.data : null;
+      // NOTE: profile times (trialEnd / rewardEnd / planEnd) are epoch
+      // milliseconds (Date.now()); request.time is a Timestamp → .toMillis().
+      return d != null && (
+        ('trialEnd' in d && d.trialEnd > request.time.toMillis()) ||
+        ('rewardEnd' in d && d.rewardEnd > request.time.toMillis()) ||
+        (('plan' in d && (d.plan == 'pro' || d.plan == 'paid')) &&
+         (!('planEnd' in d) || d.planEnd > request.time.toMillis()))
+      );
+    }
+
+    // Public-listing of every user's profile (name, classLevel, photoUrl,
+    // totalStudySeconds) is needed for the leaderboard and same-class
+    // friend search. Only the OWNER (or admin) can write.
+    // SECURITY: the owner may write anything EXCEPT the `isAdmin` field —
+    // admin elevation is ONLY possible through the isAdmin() email-token
+    // gate above; a self-set isAdmin flag grants nothing in these rules.
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      // SECURITY (H1): plan/entitlement fields are ADMIN-ONLY. hasActivePlan()
+      // below reads this same doc — if the owner could write these fields, any
+      // user could grant themselves an unlimited premium plan. They are seeded
+      // by the Cloud Functions seedUserProfile / grantLegacyTrial (admin SDK
+      // bypasses rules) and set by the admin panel. Keep this key list in sync
+      // with PLAN_GATE_KEYS (functions/index.js).
+      allow create: if isOwner(uid) &&
+        !request.resource.data.keys().hasAny(['isAdmin','plan','trialStart','trialEnd','planEnd','rewardEnd','packageId','aiPlan','credits','freeAiLocked']);
+      allow update: if isAdmin() || (isOwner(uid) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['isAdmin','plan','trialStart','trialEnd','planEnd','rewardEnd','packageId','aiPlan','credits','freeAiLocked']));
+      allow delete: if isOwner(uid) || isAdmin();
+      // Most subcollections are private to the user.
+      match /notes/{doc=**}        { allow read, write: if isOwner(uid) || isAdmin(); }
+      match /projects/{doc=**}     { allow read, write: if isOwner(uid) || isAdmin(); }
+      // File library — metadata only; blobs live in IndexedDB (offline).
+      // Read stays open for the owner; writes are premium ("More storage").
+      match /files/{doc=**}        { allow read: if isOwner(uid) || isAdmin();
+                                     allow write: if isAdmin() || (isOwner(uid) && hasActivePlan(uid)); }
+      match /folders/{doc=**}      { allow read, write: if isOwner(uid) || isAdmin(); }
+      // AI conversation mirror (js/chat.js) — one doc per user holding the
+      // bounded message thread. Owner-only (AI access itself is gated
+      // separately by gateAi + the server proxy).
+      match /conversations/{docId} { allow read, write: if isOwner(uid) || isAdmin(); }
+      // Premium subcollections — trial শেষে package ছাড়া write বন্ধ (note
+      // লেখা সবসময় খোলা; নিজের data read সবসময় খোলা)।
+      match /syllabus/{doc=**}     { allow read: if isOwner(uid) || isAdmin();
+                                     allow write: if isAdmin() || (isOwner(uid) && hasActivePlan(uid)); }
+      // Active NEXUS syllabus payload (js/active-syllabus.js) — the unified
+      // { user_metadata, practice_center_dropdowns, study_planner } doc.
+      // Owner reads/writes; admin moderates. (Also covered by the catch-all
+      // below — explicit rule documents the field contract.)
+      match /active_syllabus/{sid} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow write: if isAdmin() || (isOwner(uid) && hasActivePlan(uid));
+      }
+      match /tasks/{doc=**}        { allow read: if isOwner(uid) || isAdmin();
+                                     allow write: if isAdmin() || (isOwner(uid) && hasActivePlan(uid)); }
+      match /mindmaps/{doc=**}     { allow read: if isOwner(uid) || isAdmin(); // AI Mind Maps (PRD 14.20)
+                                     allow write: if isAdmin() || (isOwner(uid) && hasActivePlan(uid)); }
+      match /study_logs/{doc=**}   { allow read: if isOwner(uid) || isAdmin();
+                                     allow write: if isAdmin() || (isOwner(uid) && hasActivePlan(uid)); }
+      // shared_with_me is the inbox — owner reads, ANY signed-in user
+      // can drop a doc here as long as `sharedByUid` matches their auth.
+      match /shared_with_me/{shareId} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow create: if signedIn() &&
+          request.resource.data.sharedByUid == request.auth.uid;
+        // After creation, both the recipient AND the original author can
+        // append to the blocks array (append-only is enforced client-side
+        // — admins moderate via /direct_messages logs).
+        allow update: if isOwner(uid) ||
+          (signedIn() && resource.data.sharedByUid == request.auth.uid) ||
+          isAdmin();
+        allow delete: if isOwner(uid) || isAdmin();
+      }
+      // Notifications inbox — the sender (fromUid must be their own uid)
+      // can drop/refresh a notification here; the owner marks read.
+      match /notifications/{notifId} {
+        allow read, delete: if isOwner(uid) || isAdmin();
+        allow create: if signedIn() &&
+          request.resource.data.fromUid == request.auth.uid &&
+          request.resource.data.toUid != request.auth.uid;
+        allow update: if isOwner(uid) || isAdmin() ||
+          (signedIn() && resource.data.fromUid == request.auth.uid);
+      }
+      // Shared mind maps + resources — same pattern as shared_with_me.
+      match /shared_mindmaps/{shareId} {
+        allow read, delete: if isOwner(uid) || isAdmin();
+        allow create: if signedIn() &&
+          request.resource.data.sharedByUid == request.auth.uid;
+        allow update: if isOwner(uid) || isAdmin() ||
+          (signedIn() && resource.data.sharedByUid == request.auth.uid);
+      }
+      match /shared_resources/{shareId} {
+        allow read, delete: if isOwner(uid) || isAdmin();
+        allow create: if signedIn() &&
+          request.resource.data.sharedByUid == request.auth.uid;
+        allow update: if isOwner(uid) || isAdmin() ||
+          (signedIn() && resource.data.sharedByUid == request.auth.uid);
+      }
+      // Class question bank — quiz attempts + bookmarks (private to owner).
+      // (The catch-all below also permits these; explicit rules document the
+      // field contracts used by js/qb-class.js.)
+      match /quiz_attempts/{doc=**} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow write: if isAdmin() || (isOwner(uid) && hasActivePlan(uid));
+      }
+      match /qb_bookmarks/{doc=**} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow write: if isAdmin() || (isOwner(uid) && hasActivePlan(uid));
+      }
+      // === Screen-time / live usage (Android WebView app) ===
+      // usage_stats/{YYYY-MM-DD}: {day,totalMs,byApp,updatedAt} — owner +
+      // admin only (privacy); NOT plan-gated (usage capture is free-tier).
+      match /usage_stats/{day} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow write: if isAdmin() || (isOwner(uid) &&
+          request.resource.data.keys().hasOnly(['day','totalMs','byApp','updatedAt']));
+      }
+      // live_usage/current: {uid,appName,package,sinceMs,heartbeatAt,permsGranted}
+      // — owner writes heartbeat; any signed-in user may read (friends/live
+      // rooms consented view); admin may read all.
+      match /live_usage/{docId} {
+        allow read: if isOwner(uid) || isAdmin() || signedIn();
+        allow write: if isAdmin() || (isOwner(uid) &&
+          request.resource.data.keys().hasOnly(['uid','appName','package','sinceMs','heartbeatAt','permsGranted']));
+      }
+      // blocklist/{id}: {pattern,type} — owner manages own website block list.
+      match /blocklist/{docId} {
+        allow read, write: if isOwner(uid) || isAdmin();
+      }
+      // Catch-all for any other private subcollection. Writes are plan-gated:
+      // free users (after trial) may ONLY write their notes — everything else
+      // (revision, tasks, mindmaps, practice data, ...) needs an active plan.
+      // (Notifications/shared-* subcollections keep their own open rules
+      // above, which independently grant those creates.)
+      match /{sub}/{doc=**} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow write: if isAdmin() ||
+          (isOwner(uid) && (sub == 'notes' || hasActivePlan(uid)));
+      }
+    }
+
+    match /public_profiles/{uid} {
+      allow read: if signedIn();
+      allow create, update: if isOwner(uid) || isAdmin();
+      allow delete: if isOwner(uid) || isAdmin();
+      // === Live Study Rooms (Feature 1) ===
+      // js/live-rooms.js writes presence fields (isStudying, studySubject,
+      // focusStartedAt) via syncPublicProfile which also includes uid, name,
+      // institution etc. — the owner-write rule above covers all fields.
+      // (Field contract documented in comments; no separate allow rule needed.)
+    }
+
+    // Shared syllabus AI questions cache — writing to it is a premium
+    // feature (trial শেষে package ছাড়া AI question generation বন্ধ)।
+    match /syllabus_questions/{cacheId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && hasActivePlan(request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
+    // Class question-bank metadata (js/qb-class.js syncs against this).
+    // Readable by any signed-in user (single doc — 1 read per app open);
+    // only admins publish/update it. The large banks themselves live in the
+    // static /data/class{Level}/subject.json files (no Firestore cost).
+    match /question_bank_meta/{docId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // === NEXUS textbook reference database (js/textbook-db.js reads;
+    // admin/js/textbook-admin.js writes) ===
+    // Readable by any signed-in user (subject dropdowns + prompt context);
+    // writable ONLY by admins (email-token isAdmin() gate above).
+    match /textbook_db/{docId} {
+      allow read: if signedIn();
+      allow create: if isAdmin() &&
+        request.resource.data.classLevel is string &&
+        request.resource.data.subject is string &&
+        request.resource.data.subject.size() > 0 &&
+        request.resource.data.chapters is list;
+      allow update, delete: if isAdmin();
+    }
+
+    // System settings + feature flags + packages.
+    match /system/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /system_private/{doc} {
+      allow read, write: if isAdmin();
+    }
+
+    // Section 4 / Section 15 — keys that the user-side app legitimately needs
+    // (imgbb image-host key, YouTube Data API key). Readable by any signed-in
+    // user but NOT publicly, so unauthenticated visitors can't scrape them.
+    // groqKey / turnstileSecret stay in /system_private/{doc}.
+    // SECURITY (C2): the legacy `aikey` doc (admin AI provider key) is denied
+    // to clients here — admin keys must only ever live server-side
+    // (/system_private) and be used via the proxy.
+    match /system_client/{doc} {
+      allow read: if request.auth != null && doc != 'aikey';
+      allow write: if isAdmin();
+    }
+    match /packages/{pkg} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Support chat — user can read/write only their own messages.
+    match /support_chats/{msgId} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create: if (signedIn() && request.resource.data.uid == request.auth.uid && request.resource.data.from == 'user')
+                    || isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    // Revision settings — private per-user doc (js/settings.js writes
+    // user_rev_settings/{uid}); owner reads/writes, admin everything.
+    match /user_rev_settings/{uid} {
+      allow read, write: if isOwner(uid) || isAdmin();
+    }
+
+    // Focus sessions — created by the user who ran the session (uid must
+    // match their auth); owner reads own, admin reads everything.
+    match /focus_sessions/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid && hasActivePlan(request.auth.uid);
+      allow update, delete: if isAdmin();
+    }
+
+    // Push-notification announcement queue — any signed-in user's client
+    // watches system/announcements_queue/pending and marks a doc as sent
+    // (only the sentAt field changes); only admins create/delete entries.
+    match /system/announcements_queue/pending/{doc} {
+      allow read: if signedIn();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() ||
+        (signedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['sentAt']));
+    }
+
+    // Payment requests.
+    // SECURITY (UddoktaPay): a client may only CREATE its own request with
+    // status 'pending' — auto-payment requests are created server-side by the
+    // Cloud Function createUddoktaPayCheckout (Admin SDK bypasses rules), and
+    // status transitions (approved/rejected) happen ONLY in the UddoktaPay
+    // webhook / the admin panel. A browser can never approve itself.
+    match /payment_requests/{reqId} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create: if signedIn() &&
+        request.resource.data.uid == request.auth.uid &&
+        request.resource.data.status == 'pending' &&
+        !request.resource.data.keys().hasAny([
+          'approvedAt','rejectedAt','webhookAt','invoiceId',
+          'providerRef','checkoutUrl','gatewayMessage','provider'
+        ]);
+      allow update, delete: if isAdmin();
+    }
+
+    match /user_tasks/{taskId} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid && hasActivePlan(request.auth.uid);
+      allow update, delete: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+    }
+
+    // Referral codes.
+    match /referrals/{code} {
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /user_ids/{id} {
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // === Social / gamification ===
+
+    // Schools registry — admin-managed; everyone reads.
+    match /schools/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /school_requests/{id} {
+      allow read: if isAdmin() ||
+        (signedIn() && resource.data.requestedByUid == request.auth.uid);
+      allow create: if request.resource.data.keys().hasOnly([
+        'name','type','district','upazila','requestedByUid','requestedByEmail','status','createdAt'
+      ]) && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2
+        && request.resource.data.name.size() <= 120
+        && request.resource.data.status == 'pending';
+      allow update, delete: if isAdmin();
+    }
+
+    // Friend requests — author OR target may read; only author may create;
+    // either party may update status (accept/reject).
+    match /friend_requests/{id} {
+      allow read: if isAdmin() || (signedIn() && (
+        resource.data.fromUid == request.auth.uid ||
+        resource.data.toUid == request.auth.uid
+      ));
+      allow create: if signedIn() &&
+        request.resource.data.fromUid == request.auth.uid &&
+        hasActivePlan(request.auth.uid);
+      allow update: if isAdmin() || (signedIn() && (
+        resource.data.fromUid == request.auth.uid ||
+        resource.data.toUid == request.auth.uid
+      ));
+      allow delete: if isAdmin();
+    }
+
+    // Study groups — anyone signed in may read (browse rooms); a signed-in
+    // user may create a group (recorded as createdBy) and may join/leave by
+    // adding/removing only their own uid in memberIds. Admin moderates.
+    match /study_groups/{id} {
+      allow read: if signedIn();
+      allow create: if signedIn() &&
+        request.resource.data.createdBy == request.auth.uid &&
+        request.resource.data.memberIds is list &&
+        request.resource.data.memberIds.hasOnly([request.auth.uid]) &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() >= 2 &&
+        request.resource.data.name.size() <= 80 &&
+        hasActivePlan(request.auth.uid);
+      allow update: if isAdmin() || (signedIn() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['memberIds']) &&
+        request.resource.data.memberIds is list &&
+        (request.resource.data.memberIds.hasAny([request.auth.uid])
+          != resource.data.memberIds.hasAny([request.auth.uid])));
+      allow delete: if isAdmin();
+    }
+
+    // Friendships — both parties read; either can create the doc when
+    // accepting; admin can read all (moderation).
+    match /friendships/{id} {
+      allow read: if isAdmin() || (signedIn() &&
+        request.auth.uid in resource.data.uids);
+      allow create: if signedIn() &&
+        request.auth.uid in request.resource.data.uids &&
+        hasActivePlan(request.auth.uid);
+      allow update: if isAdmin() || (signedIn() &&
+        request.auth.uid in resource.data.uids);
+      allow delete: if isAdmin() || (signedIn() &&
+        request.auth.uid in resource.data.uids);
+    }
+
+    // Direct messages — only the two participants can read/write; admin
+    // sees everything for moderation.
+    // IMPORTANT: Firestore security rules are not filters — a collection
+    // query is ALLOWED only when its filter fields match the rule conditions
+    // (queries are all-or-nothing). The client therefore queries by
+    // `uids array-contains <myUid>` and the rule below mirrors that field.
+    match /direct_messages/{id} {
+      allow read: if isAdmin() || (signedIn() && (
+        request.auth.uid in resource.data.uids ||
+        resource.data.fromUid == request.auth.uid ||
+        resource.data.toUid == request.auth.uid
+      ));
+      allow create: if signedIn() &&
+        request.resource.data.fromUid == request.auth.uid &&
+        request.resource.data.toUid != request.auth.uid &&
+        request.resource.data.uids is list &&
+        request.resource.data.uids.hasAll([request.auth.uid, request.resource.data.toUid]) &&
+        hasActivePlan(request.auth.uid);
+      allow update, delete: if isAdmin();
+    }
+
+    // WebRTC signaling for peer-to-peer image transfer — only the two
+    // friends in the pair can read/write (tiny SDP/ICE text, never image
+    // bytes; the doc is deleted after the transfer completes).
+    match /webrtc/{id} {
+      allow read, update, delete: if isAdmin() || (signedIn() &&
+        request.auth.uid in resource.data.uids);
+      allow create: if signedIn() &&
+        request.auth.uid in request.resource.data.uids &&
+        hasActivePlan(request.auth.uid);
+    }
+
+    // Class communities — members can read/write messages; users can
+    // self-enroll into the members subcollection.
+    match /class_communities/{classKey} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && hasActivePlan(request.auth.uid);
+      allow delete: if isAdmin();
+      match /members/{memberUid} {
+        allow read: if signedIn();
+        allow write: if isAdmin() || (signedIn() && request.auth.uid == memberUid && hasActivePlan(request.auth.uid));
+      }
+      match /messages/{msgId} {
+        allow read: if signedIn();
+        allow create: if signedIn() &&
+          request.resource.data.uid == request.auth.uid &&
+          hasActivePlan(request.auth.uid);
+        allow update, delete: if isAdmin();
+      }
+    }
+
+    // Quiz campaigns — public read; only admin writes.
+    match /quiz_campaigns/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    // Quiz attempts — owner creates; admin reads everything.
+    match /quiz_attempts/{id} {
+      allow read: if isAdmin() || (signedIn() &&
+        resource.data.uid == request.auth.uid);
+      allow create: if signedIn() &&
+        request.resource.data.uid == request.auth.uid &&
+        hasActivePlan(request.auth.uid);
+      allow update, delete: if isAdmin();
+    }
+
+    // Global study logs (used by admin charts).
+    match /study_logs/{id} {
+      allow read: if isAdmin();
+      allow create: if signedIn() &&
+        request.resource.data.uid == request.auth.uid &&
+        hasActivePlan(request.auth.uid);
+      allow update, delete: if isAdmin();
+    }
+
+    // Notices (admin push to all users).
+    match /notices/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Admin-defined custom features for the user dashboard.
+    match /admin_features/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /admin_notifications/{id} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Resources (class/department-based study material) - any signed-in
+    // user can browse/download; only admins upload or edit.
+    match /resources/{id} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Resource requests - the requesting user creates their own request;
+    // admins read/update (fulfill) and delete.
+    match /resource_requests/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create: if signedIn() &&
+        request.resource.data.uid == request.auth.uid &&
+        request.resource.data.status == 'pending' &&
+        hasActivePlan(request.auth.uid);
+      allow update, delete: if isAdmin();
+    }
+
+    // Device registry - soft free-AI-credit limit (max 2 accounts per device;
+    // the 3rd+ account gets no free AI credits). Any signed-in user may add
+    // their own uid; admins can clean up.
+    match /devices/{deviceId} {
+      allow read: if isAdmin() || (signedIn() && request.auth.uid in resource.data.uids);
+      allow create, update: if signedIn() &&
+        request.resource.data.uids.size() <= 10 &&
+        request.auth.uid in request.resource.data.uids;
+      allow delete: if isAdmin();
+    }
+
+    match /password_reset_requests/{id} {
+      allow read, update, delete: if isAdmin();
+      allow create: if true;
+    }
+
+    match /question_banks/{id} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /notif_disable_requests/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // === School Wars: Emergency Skips ===
+    // Students submit a written emergency reason (2/day, client-enforced);
+    // the reason is PRIVATE — only the student, the auto risk system and
+    // admins can read it. Admins approve/reject and see the risk score.
+    match /emergency_skips/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create: if signedIn() &&
+        request.resource.data.uid == request.auth.uid &&
+        request.resource.data.status == 'pending' &&
+        request.resource.data.reason is string &&
+        request.resource.data.reason.size() >= 20 &&
+        request.resource.data.reason.size() <= 1500 &&
+        hasActivePlan(request.auth.uid);
+      allow update, delete: if isAdmin();
+    }
+
+    // === Feature 4: Knowledge Duels ===
+    // Duel doc shape (see js/knowledge-duels.js):
+    //   { hostUid, guestUid, hostName, guestName,
+    //     playerIds: [hostUid, guestUid], subject, chapter,
+    //     questions: [{q, options, ans, exp}],   // shared, identical for both
+    //     players: { uid: {score, correct, wrong, totalMs, answers, finishedAt} },
+    //     status: waiting|active|finished|declined|cancelled,
+    //     createdAt, startedAt, finishedAt, winner, winnerName, tie }
+    // Only the two players (or admins) can read/update their duel; the host
+    // creates it; either player can cancel/decline/force-settle.
+    match /duels/{id} {
+      allow read: if isAdmin() || (signedIn() && request.auth.uid in resource.data.playerIds);
+      allow create: if signedIn() &&
+        request.resource.data.hostUid == request.auth.uid &&
+        request.resource.data.playerIds[0] == request.auth.uid &&
+        hasActivePlan(request.auth.uid);
+      allow update: if isAdmin() || (signedIn() && request.auth.uid in resource.data.playerIds);
+      allow delete: if isAdmin();
+    }
+
+    // === Feature 7: Study Buddy requests ===
+    // Same shape as friend_requests: { fromUid, fromName, toUid, toName,
+    // status: pending|accepted|rejected|cancelled, createdAt }.
+    match /buddy_requests/{id} {
+      allow read: if isAdmin() || (signedIn() && (
+        resource.data.fromUid == request.auth.uid ||
+        resource.data.toUid == request.auth.uid
+      ));
+      allow create: if signedIn() &&
+        request.resource.data.fromUid == request.auth.uid &&
+        request.resource.data.toUid != request.auth.uid &&
+        hasActivePlan(request.auth.uid);
+      allow update: if isAdmin() || (signedIn() && (
+        resource.data.fromUid == request.auth.uid ||
+        resource.data.toUid == request.auth.uid
+      ));
+      allow delete: if isAdmin();
+    }
+  }
+}

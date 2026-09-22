@@ -1,0 +1,74 @@
+{
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs20"
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      ".firebaserc",
+      "firestore.rules",
+      "firestore.indexes.json",
+      "database.rules.json",
+      "node_modules/**",
+      "functions/**",
+      "admin/**",
+      "db/**",
+      "supabase-backup/**",
+      "raw/**",
+      "proxy/**",
+      "tts-server/**",
+      "scripts/**",
+      "stitch_second_brain_design_system/**",
+      "codebase-memory-mcp/**",
+      "css-backup/**",
+      "colab_cpu_project.ipynb",
+      "colab_cpu_project.py",
+      "start-llm7.bat",
+      "start-llm7.ps1",
+      "test.py",
+      "test-file.html",
+      "package.json",
+      "package-lock.json",
+      "papers/**",
+      "data/**",
+      ".opencode/**",
+      ".megaignore",
+      "Dridhota-AI-Flutter-PRD.md",
+      "**/*.md",
+      "**/.*",
+      "**/__*"
+    ],
+    "headers": [
+      {
+        "source": "/sw.js",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+        ]
+      },
+      {
+        "source": "/",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache" }
+        ]
+      },
+      {
+        "source": "/index.html",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache" }
+        ]
+      },
+      {
+        "source": "/admin/admin.html",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache" }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "read": "allow",
+    "edit": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "list": "allow",
+    "todowrite": "allow",
+    "question": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "skill": "allow",
+    "lsp": "allow",
+    "task": "allow",
+    "doom_loop": "allow",
+    "bash": {
+      "*": "allow",
+      "rm -rf *": "ask",
+      "rm -r *": "ask",
+      "del *": "ask",
+      "rmdir *": "ask",
+      "format *": "ask",
+      "shutdown *": "ask",
+      "restart *": "ask",
+      "net user *": "ask",
+      "netsh *": "ask",
+      "reg *": "ask",
+      "icacls *": "ask",
+      "takeown *": "ask",
+      "cipher *": "ask",
+      "bcdedit *": "ask",
+      "diskpart *": "ask",
+      "mkfs *": "ask",
+      "dd *": "ask",
+      "sudo *": "ask",
+      "chmod *": "ask",
+      "chown *": "ask",
+      "git push --force *": "ask",
+      "git push -f *": "ask",
+      "npm publish *": "ask",
+      "pip install *": "ask"
+    },
+    "external_directory": {
+      "*": "ask",
+      "C:\\Users\\SAMSUNG\\AppData\\Local\\Temp\\opencode*": "allow",
+      "C:\\Users\\SAMSUNG\\AppData\\Local\\Temp\\opencode\\**": "allow"
+    }
+  }
+}

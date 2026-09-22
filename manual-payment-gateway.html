@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual Payment Gateway - Auto Verify System</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f8fafc;--card:#fff;--line:#e2e8f0;--text:#0f172a;--muted:#64748b;--primary:#7c3aed;--primary2:#4f46e5;--success:#10b981;--warn:#f59e0b;--danger:#ef4444;--radius:16px;--shadow:0 10px 30px rgba(0,0,0,.07)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hind Siliguri','Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.container{max-width:1180px;margin:auto;padding:0 16px}
+.header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 0;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.1rem}
+.logo-badge{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--primary2));display:grid;place-items:center;color:#fff;font-size:18px}
+.nav{display:flex;gap:8px;flex-wrap:wrap}
+.nav button{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:600;font-size:.88rem;transition:.2s}
+.nav button.active{background:var(--text);color:#fff;border-color:var(--text)}
+.badge-live{font-size:.7rem;background:#dcfce7;color:#166534;padding:3px 8px;border-radius:999px;border:1px solid #bbf7d0;display:inline-flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;background:var(--success);border-radius:50%;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero{margin:18px auto;background:linear-gradient(135deg,#7c3aed 0%,#4f46e5 55%,#0ea5e9 100%);color:#fff;border-radius:22px;padding:22px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-30px;top:-30px;width:220px;height:220px;background:rgba(255,255,255,.12);border-radius:50%}
+.hero h1{font-size:1.6rem;line-height:1.2;position:relative;z-index:1}
+.hero p{opacity:.9;margin-top:6px;max-width:650px;position:relative;z-index:1;font-size:.95rem}
+.hero-stats{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;position:relative;z-index:1}
+.stat-mini{background:rgba(255,255,255,.14);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);padding:10px 14px;border-radius:14px;min-width:130px}
+.stat-mini b{font-size:1.15rem;display:block}
+.stat-mini span{font-size:.78rem;opacity:.9}
+.tabs{display:none}.tabs.active{display:block;animation:fade .25s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.grid{display:grid;grid-template-columns:1.35fr .75fr;gap:16px;margin-top:16px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.card-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card-head h3{font-size:.95rem;display:flex;align-items:center;gap:8px}
+.card-body{padding:16px}
+.muted{color:var(--muted);font-size:.85rem}
+.products{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.product{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.product img{width:100%;height:130px;object-fit:cover;background:#f1f5f9}
+.product-info{padding:12px;flex:1;display:flex;flex-direction:column;gap:6px}
+.product-info h4{font-size:.92rem;line-height:1.3}
+.price{font-weight:800;color:var(--primary)}
+.btn{padding:9px 14px;border-radius:10px;border:1px solid transparent;cursor:pointer;font-weight:700;font-size:.85rem;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:.18s}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(124,58,237,.25)}
+.btn-ghost{background:#fff;border-color:var(--line)}
+.btn-block{width:100%}
+.btn-sm{padding:7px 10px;font-size:.8rem}
+.input,.select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font-family:inherit;font-size:.9rem;outline:none}
+.input:focus,.select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(124,58,237,.12)}
+.label{font-size:.82rem;font-weight:600;margin-bottom:6px;display:block}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.row{grid-template-columns:1fr}}
+.cart-item{display:flex;gap:10px;align-items:center;padding:10px;border:1px dashed var(--line);border-radius:12px;margin-bottom:8px;background:#f8fafc}
+.cart-item img{width:46px;height:46px;border-radius:10px;object-fit:cover}
+.qty{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:2px;background:#fff}
+.qty button{width:26px;height:26px;border-radius:50%;border:0;background:#f1f5f9;cursor:pointer;font-weight:700}
+.total-row{display:flex;justify-content:space-between;padding:8px 0;border-top:1px dashed var(--line);margin-top:8px;font-weight:700}
+.ref-box{background:linear-gradient(135deg,#fef3c7,#fde68a);border:1px solid #fcd34d;border-radius:14px;padding:12px;text-align:center}
+.ref-code{font-family:monospace;font-size:1.35rem;font-weight:800;letter-spacing:1px;color:#92400e;background:#fff;border:1px dashed #f59e0b;padding:6px 10px;border-radius:10px;display:inline-block;margin:6px 0}
+.instruction{background:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;padding:12px}
+.pay-method{border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;align-items:center;gap:10px;background:#fff;cursor:pointer}
+.pay-method.active{border-color:var(--primary);background:#f5f3ff;box-shadow:0 0 0 3px rgba(124,58,237,.12)}
+.pay-logo{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;font-weight:800;color:#fff;font-size:.75rem}
+.bkash{background:#e11d48}.nagad{background:#f97316}.rocket{background:#7c3aed}.upay{background:#0ea5e9}
+.verify-box{border:2px solid var(--line);border-radius:14px;padding:14px;background:#fff;position:relative}
+.auto-badge{position:absolute;right:12px;top:-10px;background:#0f172a;color:#fff;font-size:.68rem;padding:3px 8px;border-radius:999px;display:flex;align-items:center;gap:5px}
+.progress{height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--success),#06b6d4);width:0;transition:.4s}
+.status{padding:4px 8px;border-radius:999px;font-size:.72rem;font-weight:700;border:1px solid}
+.s-pending{background:#fef9c3;color:#854d0e;border-color:#fde68a}
+.s-verified{background:#dcfce7;color:#166534;border-color:#bbf7d0}
+.s-rejected{background:#fee2e2;color:#991b1b;border-color:#fecaca}
+.s-checking{background:#e0e7ff;color:#3730a3;border-color:#c7d2fe}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{text-align:left;padding:10px;background:#f8fafc;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px;border-bottom:1px solid #f1f5f9;white-space:nowrap}
+.search{position:relative}.search input{padding-left:36px}
+.search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.5}
+.kbd{font-family:monospace;background:#0f172a;color:#fff;padding:2px 6px;border-radius:6px;font-size:.75rem}
+.copy{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 8px;font-size:.75rem}
+.alert{padding:10px 12px;border-radius:12px;border:1px solid;font-size:.85rem}
+.alert-success{background:#dcfce7;border-color:#bbf7d0;color:#166534}
+.alert-warn{background:#fef3c7;border-color:#fde68a;color:#92400e}
+.alert-info{background:#dbeafe;border-color:#bfdbfe;color:#1e40af}
+.flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.divider{height:1px;background:var(--line);margin:12px 0}
+.small{font-size:.78rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="header"><div class="container header-inner">
+<div class="logo"><div class="logo-badge">&#2547;</div> PayMaster <span class="badge-live"><span class="dot"></span> Live Verify</span></div>
+<nav class="nav">
+<button class="active" data-tab="shop">&#128722; &#2476;&#2494;&#2480;&#2495;&#2482; &#2474;&#2503;&#2482;&#2509;</button>
+<button data-tab="verify">&#9989; &#2474;&#2497;&#2480;&#2509; &#2479;&#2497;&#2503;&#2474;&#2497;</button>
+<button data-tab="admin">&#128737;&#65039; &#2465;&#2467;admin&#2467; &#2475;&#2468;&#2468;&#2503;&#2479;&#2509;</button>
+<button data-tab="setup">&#9881;&#65039; Firebase &#2480;&#2503;&#2476;&#2503;</button>
+</nav></div></header>
+<div class="container">
+<div class="hero">
+<h1>Manual Payment Gateway &#8212; Auto Transaction Detect System</h1>
+<p>&#2475;&#2494;&#2509;&#2480;&#2509;&#2482; &#2476;&#2494;&#2480;&#2495;&#2482; &#2479;&#2503; &#2474;&#2503;&#2482;&#2509; &#2453;&#2466; &#8594; &#2479;&#2509;&#2466; <b>&#2478;&#2494; &#2476;&#2503; Reference Code</b> &#2479;&#2468; &#2478; &#2453; &#8594; bKash/Nagad &#2475; &#2489;&#2503;&#2478; &#2474; &#2482; &#2453; &#2476; Transaction ID + Reference Code &#2455; &#2476; <b>Firebase Auto Verify</b> &#2474; &#8594; &#2475; &#2439; &#2475; &#2439; &#2475; &#2439; &#8212; HTML, CSS, JS.</p>
+<div class="hero-stats">
+<div class="stat-mini"><b id="h-total">0</b><span>&#2475; &#2475; &#2474;&#2503;&#2482;&#2509;</span></div>
+<div class="stat-mini"><b id="h-pending">0</b><span>Pending</span></div>
+<div class="stat-mini"><b id="h-verified">0</b><span>Verified</span></div>
+<div class="stat-mini"><b id="h-fb-status">Local Mode</b><span id="h-fb-sub">Firebase &#2485;</span></div>
+</div></div>
+
+<div id="tab-shop" class="tabs active"><div class="grid">
+<div class="card"><div class="card-head"><h3>&#128722; &#2475;&#2494;&#2509;&#2480; &#2482; &#2465; &#2476; &#2482; &#2453;</h3><span class="muted">&#2479;&#2509;&#2466; &#2478;&#2494; &#2476;&#2503; Reference Code</span></div>
+<div class="card-body"><div class="products" id="products"></div>
+<div class="divider"></div>
+<div class="card" style="background:#f8fafc"><div class="card-body">
+<h4 style="font-size:.9rem;margin-bottom:8px">&#128100; &#2475;&#2494;&#2509;&#2480; &#2467;&#2497;&#2476; (&#2474;&#2503;&#2482;&#2509; &#2453; &#2475;)</h4>
+<div class="row"><div><label class="label">&#2478;&#2494;</label><input id="c-name" class="input" placeholder="&#2448; &#2478;&#2494;"></div>
+<div><label class="label">&#2476;&#2481; &#2476; &#2453;</label><input id="c-phone" class="input" placeholder="01XXXXXXXXX"></div></div>
+<div style="margin-top:10px"><label class="label">&#2475; &#2476; &#2482; &#2489;&#2476;</label><input id="c-email" class="input" placeholder="you@gmail.com"></div>
+</div></div></div></div>
+
+<div style="display:flex;flex-direction:column;gap:16px">
+<div class="card"><div class="card-head"><h3>&#129534; &#2480; &#2474; &#2453;</h3><span class="status s-pending" id="cart-count">0</span></div>
+<div class="card-body">
+<div id="cart"></div>
+<div id="cart-empty" class="alert alert-info">&#2480; &#2453; &#8212; &#2475;&#2494;&#2509;&#2480; Add &#2453;</div>
+<div id="cart-summary" style="display:none">
+<div class="total-row"><span>Subtotal</span><span id="subtotal">&#2547;0</span></div>
+<div class="total-row" style="border:0;padding-top:4px"><span>Delivery</span><span style="color:var(--success)">Free</span></div>
+<div class="total-row" style="font-size:1.05rem"><span>Total</span><span id="total" style="color:var(--primary)">&#2547;0</span></div>
+<button class="btn btn-primary btn-block" style="margin-top:12px" onclick="createOrder()">&#128274; &#2474;&#2503;&#2482;&#2509; &#2453; &amp; Reference Code &#2478;</button>
+</div>
+<div id="order-created" style="display:none;margin-top:14px">
+<div class="ref-box">
+<div style="font-weight:700;color:#92400e">&#9989; &#2474;&#2503;&#2482;&#2509; &#2463; &#2453;&#2468;!</div>
+<div class="small">&#2448; Reference Code &#2467; &#2474; &#2465; &#2454; &#2453; &#2453;</div>
+<div class="ref-code" id="ref-code">REF-XXXX</div>
+<div class="flex" style="justify-content:center"><button class="copy" onclick="copyRef()">&#128203; Copy</button><span class="small" id="ref-time"></span></div>
+<div class="progress" style="margin-top:10px"><i id="ref-progress"></i></div>
+<div class="small">&#8987; Reference Code 15 &#2476;&#2503;&#2482; &#2475; &#2453; &#2448; &#2454;</div></div>
+
+<div class="instruction" style="margin-top:12px">
+<h4 style="font-size:.9rem;margin-bottom:8px">&#128179; &#2474; &#2465; &#2453; &#8212; &#2489; &#2479;&#2509;&#2468;</h4>
+<div style="display:grid;gap:8px">
+<label class="pay-method active" onclick="selectPay(this,'bkash')"><span class="pay-logo bkash">bKash</span><span><b>bKash Personal</b><br><span class="small kbd">01840-123456</span></span><span style="margin-left:auto">&#10003;</span></label>
+<label class="pay-method" onclick="selectPay(this,'nagad')"><span class="pay-logo nagad">Nagad</span><span><b>Nagad Personal</b><br><span class="small kbd">01840-123456</span></span></label>
+<label class="pay-method" onclick="selectPay(this,'rocket')"><span class="pay-logo rocket">Rocket</span><span><b>Rocket Personal</b><br><span class="small kbd">01840-1234567</span></span></label>
+</div>
+<div class="alert alert-warn" style="margin-top:10px">&#9888;&#65039; <b>Important:</b> &#2489;&#2503;&#2478; &#2474; &#2482; &#2453; &#2453; Reference Code &#2467; <b>Reference / Note</b> &#2489; &#2479;&#2509;&#2466; &#2455; &#2453;&#2503; &#2453;&#2503; &#2454;&#2453; &#12290; &#2478; &#2454; Auto Verify &#2474; &#2454; &#12290;</div>
+<button class="btn btn-ghost btn-block" style="margin-top:10px" onclick="goVerify()">&#10145;&#65039; &#2474; &#2465; &#2453; Transaction ID &#2463;</button></div></div></div></div>
+
+<div class="card"><div class="card-head"><h3>&#128269; Auto Detect &#2455; &#2454; &#2439; &#2454;?</h3></div>
+<div class="card-body small" style="line-height:1.7">
+1&#65039;&#8419; &#2479;&#2509;&#2466; &#2474;&#2503;&#2482;&#2509; &#2475; <b>&#2478;&#2494; Reference Code + Timestamp</b> Firebase &#2479; &#2463; &#2453; &#2475;&#2503;<br>
+2&#65039;&#8419; &#2475;&#2494;&#2509;&#2480; bKash &#2479;&#2503; &#2489;&#2503;&#2478; &#2474;&#2480; <b>Transaction ID (TrxID)</b> &#2479; &#2453; &#2463;<br>
+3&#65039;&#8419; &#2476; &#2463;&#2467;&#2476; <b>Auto</b> Transaction ID + Reference Code + &#2475; &#2455;&#2503;&#2454;<br>
+4&#65039;&#8419; &#2455; &#2475; Firebase &#2479; <b>verified</b> &#2474;, &#2478; &#2455; &#2455; <b>pending</b> &#2468; &#2465; &#2467; &#2467; &#2474; &#2479;&#2467;<br>
+5&#65039;&#8419; Admin Dashboard &#2479;&#2503; &#2475; &#2468;&#2469; Approve/Reject
+</div></div>
+</div></div></div>
+
+<div id="tab-verify" class="tabs"><div class="grid">
+<div class="card"><div class="card-head"><h3>&#9989; &#2474; &#2497;&#2480;&#2509; &#2479;&#2497;&#2503;&#2474;&#2497;</h3><span class="status s-checking">Auto Detect ON</span></div>
+<div class="card-body"><div class="verify-box">
+<div class="auto-badge"><span class="dot"></span> Auto Detect Active</div>
+<label class="label">&#127991; Reference Code *</label>
+<div class="flex"><input id="v-ref" class="input" placeholder="REF-20250825-XXXXX" style="font-family:monospace;text-transform:uppercase"><button class="btn btn-ghost" onclick="pasteRef()">Paste</button></div>
+<div style="margin-top:12px"><label class="label">&#128179; Transaction ID (TrxID) *</label>
+<input id="v-trx" class="input" placeholder="TrxID" style="font-family:monospace;text-transform:uppercase">
+<div class="small" style="margin-top:6px">bKash/Nagad SMS &#2479; &#2478; &#2475; 10 &#2476; &#2475; TrxID &#2476; &#2453; &#8212; Auto &#2475;&#2494;&#2509;&#2503; &#2474;</div></div>
+<div class="row" style="margin-top:12px">
+<div><label class="label">&#2474;&#2497;&#2509;&#2503; (&#2547;)</label><input id="v-amount" class="input" type="number" placeholder="1000"></div>
+<div><label class="label">&#2474;</label><select id="v-method" class="select"><option value="bkash">bKash</option><option value="nagad">Nagad</option><option value="rocket">Rocket</option><option value="upay">Upay</option></select></div>
+</div>
+<button class="btn btn-primary btn-block" style="margin-top:14px" onclick="verifyPayment()">&#128269; Verify &#2453; (Auto Match)</button>
+<div id="verify-result" style="margin-top:12px"></div></div>
+<div class="alert alert-info" style="margin-top:12px"><b>Demo:</b> Any Ref + 6+ char TrxID = Local Instant Verify</div></div></div>
+
+<div class="card"><div class="card-head"><h3>&#128203; Recent Orders</h3><button class="btn btn-ghost btn-sm" onclick="renderMyOrders()">&#8635; Refresh</button></div>
+<div class="card-body" id="my-orders"></div></div>
+</div></div>
+
+<div id="tab-admin" class="tabs">
+<div id="admin-login" class="card" style="max-width:480px;margin:20px auto">
+<div class="card-head"><h3>&#128274; Admin Login</h3></div>
+<div class="card-body">
+<label class="label">Password</label><input id="admin-pass" type="password" class="input" placeholder="admin123">
+<div class="small" style="margin-top:6px">Default: <span class="kbd">admin123</span></div>
+<button class="btn btn-primary btn-block" style="margin-top:12px" onclick="adminLogin()">Login</button>
+<div id="admin-login-msg" style="margin-top:10px"></div></div></div>
+
+<div id="admin-panel" style="display:none">
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:12px 0">
+<div class="card"><div class="card-body" style="text-align:center"><b id="a-total" style="font-size:1.4rem">0</b><div class="small">Total</div></div></div>
+<div class="card"><div class="card-body" style="text-align:center"><b id="a-pending" style="font-size:1.4rem;color:var(--warn)">0</b><div class="small">Pending</div></div></div>
+<div class="card"><div class="card-body" style="text-align:center"><b id="a-verified" style="font-size:1.4rem;color:var(--success)">0</b><div class="small">Verified</div></div></div>
+<div class="card"><div class="card-body" style="text-align:center"><b id="a-today" style="font-size:1.4rem;color:var(--primary)">&#2547;0</b><div class="small">Today</div></div></div>
+</div>
+<div class="card"><div class="card-head">
+<h3>&#128202; All Payments</h3>
+<div class="flex">
+<div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="admin-search" class="input" placeholder="Search..." oninput="renderAdmin()"></div>
+<select id="admin-filter" class="select" style="width:150px" onchange="renderAdmin()"><option value="all">All</option><option value="pending">Pending</option><option value="verified">Verified</option><option value="rejected">Rejected</option></select>
+<button class="btn btn-ghost btn-sm" onclick="exportCSV()">CSV</button>
+<button class="btn btn-ghost btn-sm" onclick="adminLogout()">Logout</button>
+</div></div>
+<div class="table-wrap"><table>
+<thead><tr><th>Time</th><th>Reference</th><th>TrxID</th><th>Customer</th><th>Amount</th><th>Method</th><th>Status</th><th>Action</th></tr></thead>
+<tbody id="admin-tbody"></tbody></table></div></div>
+</div></div>
+
+<div id="tab-setup" class="tabs"><div class="grid">
+<div class="card"><div class="card-head"><h3>&#128293; Firebase Connect</h3><span id="fb-badge" class="status s-pending">Disconnected</span></div>
+<div class="card-body">
+<div class="alert alert-info">Firebase Connect &#2453; &#2453; &#2453; <b>TrxID + Ref + Time</b> Auto Firestore &#2479; &#2455;&#2503;&#2454; &#2474; &#12290; &#2478; &#2454; LocalStorage &#2479; &#2439; &#2454; (&#2475;&#2468;&#2503;).</div>
+<div style="display:grid;gap:10px;margin-top:12px">
+<div><label class="label">apiKey</label><input id="fb-apiKey" class="input" placeholder="AIzaSy..."></div>
+<div><label class="label">authDomain</label><input id="fb-authDomain" class="input" placeholder="yourapp.firebaseapp.com"></div>
+<div><label class="label">projectId</label><input id="fb-projectId" class="input" placeholder="yourapp-12345"></div>
+<div class="row"><div><label class="label">storageBucket</label><input id="fb-storageBucket" class="input" placeholder="yourapp.appspot.com"></div><div><label class="label">messagingSenderId</label><input id="fb-senderId" class="input" placeholder="123456..."></div></div>
+<div><label class="label">appId</label><input id="fb-appId" class="input" placeholder="1:123...:web:abc"></div>
+</div>
+<div class="flex" style="margin-top:12px">
+<button class="btn btn-primary" onclick="connectFirebase()">&#128279; Connect &amp; Save</button>
+<button class="btn btn-ghost" onclick="testFirebase()">Test</button>
+<button class="btn btn-ghost" onclick="disconnectFirebase()">Disconnect</button>
+</div>
+<div id="fb-msg" style="margin-top:10px"></div>
+<div class="divider"></div>
+<div class="small" style="line-height:1.7"><b>Firestore Rules:</b>
+<pre style="background:#0f172a;color:#e2e8f0;padding:10px;border-radius:10px;overflow:auto;margin-top:6px;font-size:.75rem">rules_version='2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /payments/{docId} {
+      allow read, write: if true;
+    }
+  }
+}</pre>
+<b>Collection:</b> <span class="kbd">payments</span></div></div></div>
+
+<div class="card"><div class="card-head"><h3>Setup Guide</h3></div>
+<div class="card-body small" style="line-height:1.8">
+<b>1.</b> Firebase Console &#2479; Create Project<br>
+<b>2.</b> Firestore Enable<br>
+<b>3.</b> Config Copy → Paste above → Connect<br>
+<b>4.</b> Order → Ref → bKash Pay → TrxID → Verify<br>
+<b>5.</b> Admin: <span class="kbd">admin123</span> → Approve/Reject<br>
+<div class="alert alert-success" style="margin-top:10px">&#9989; Single HTML file — no build needed!</div>
+</div></div></div></div>
+
+<p style="text-align:center;padding:18px" class="small">&#169; 2026 PayMaster Manual Gateway &#8226; Single File &#8226; HTML + CSS + JS &#8226; Firebase Auto Verify</p>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const PRODUCTS=[
+{id:1,name:"Premium Course Access - 1 Month",price:850,img:"https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&q=80",tag:"Best Seller"},
+{id:2,name:"2nd Brain Pro Subscription",price:1500,img:"https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&q=80",tag:"Popular"},
+{id:3,name:"Question Bank Full Package",price:550,img:"https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&q=80",tag:"NEW"},
+{id:4,name:"AI Study Buddy - Lifetime",price:2990,img:"https://images.unsplash.com/photo-1531482615713-2afd690979bc?w=400&q=80",tag:"Lifetime"},
+];
+let cart=[],currentRef=null,fb=null,isFbConnected=false;
+const $=s=>document.querySelector(s);
+const LS_KEY="paymaster_orders_v2";
+const FB_CFG_KEY="paymaster_fb_cfg";
+const loadOrders=()=>{try{return JSON.parse(localStorage.getItem(LS_KEY)||"[]")}catch{return[]}};
+const saveOrders=a=>localStorage.setItem(LS_KEY,JSON.stringify(a));
+const uid=()=>Math.random().toString(36).slice(2,8).toUpperCase();
+const genRef=()=>{const d=new Date();const ymd=d.getFullYear()+""+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");return`REF-${ymd}-${uid()}`};
+const fmt=n=>"\u09F3"+Number(n).toLocaleString("en-BD");
+const nowStr=()=>new Date().toLocaleString("bn-BD",{dateStyle:"medium",timeStyle:"short"});
+const copyText=async t=>{try{await navigator.clipboard.writeText(t);toast("Copied: "+t)}catch{prompt("Copy:",t)}};
+function toast(m,t="success"){const e=document.createElement("div");e.textContent=m;e.style.cssText=`position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:${t==="error"?"#ef4444":"#0f172a"};color:#fff;padding:10px 14px;border-radius:999px;font-size:.85rem;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,.2)`;document.body.appendChild(e);setTimeout(()=>e.remove(),2200)}
+document.querySelectorAll(".nav button").forEach(b=>{b.addEventListener("click",()=>{document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".tabs").forEach(t=>t.classList.remove("active"));$("#tab-"+b.dataset.tab).classList.add("active");if(b.dataset.tab==="admin")renderAdmin();if(b.dataset.tab==="verify")renderMyOrders()})});
+function goVerify(){document.querySelector('[data-tab="verify"]').click();if(currentRef)$("#v-ref").value=currentRef.code;window.scrollTo({top:0,behavior:"smooth"})}
+function renderProducts(){const w=$("#products");w.innerHTML="";PRODUCTS.forEach(p=>{const c=cart.find(x=>x.id===p.id);w.innerHTML+=`<div class="product"><img src="${p.img}" alt=""><div class="product-info"><span class="small" style="color:var(--primary);font-weight:700">${p.tag}</span><h4>${p.name}</h4><div class="price">${fmt(p.price)}</div><button class="btn ${c?"btn-ghost":"btn-primary"} btn-sm" style="margin-top:6px" onclick="toggleCart(${p.id})">${c?"Added":"Add to Cart"}</button></div></div>`})}
+function toggleCart(id){const i=cart.findIndex(c=>c.id===id);if(i>-1)cart.splice(i,1);else{const p=PRODUCTS.find(x=>x.id===id);cart.push({...p,qty:1})}renderProducts();renderCart()}
+function renderCart(){const b=$("#cart"),e=$("#cart-empty"),s=$("#cart-summary");if(cart.length===0){b.innerHTML="";e.style.display="block";s.style.display="none";$("#cart-count").textContent="0 items";return}e.style.display="none";s.style.display="block";let h="",sub=0;cart.forEach((c,i)=>{sub+=c.price*c.qty;h+=`<div class="cart-item"><img src="${c.img}"><div style="flex:1"><b style="font-size:.85rem">${c.name}</b><div class="small">${fmt(c.price)} x ${c.qty}</div></div><div class="qty"><button onclick="chgQty(${i},-1)">&minus;</button><span style="min-width:18px;text-align:center">${c.qty}</span><button onclick="chgQty(${i},1)">+</button></div><button class="btn btn-ghost btn-sm" onclick="toggleCart(${c.id})">&times;</button></div>`});b.innerHTML=h;$("#subtotal").textContent=fmt(sub);$("#total").textContent=fmt(sub);$("#cart-count").textContent=cart.length+" items";$("#cart-count").className="status s-verified"}
+function chgQty(i,d){cart[i].qty=Math.max(1,cart[i].qty+d);renderCart()}
+function selectPay(el,v){document.querySelectorAll(".pay-method").forEach(m=>m.classList.remove("active"));el.classList.add("active");$("#v-method").value=v}
+async function createOrder(){const name=$("#c-name").value.trim(),phone=$("#c-phone").value.trim(),email=$("#c-email").value.trim();if(cart.length===0)return toast("Cart empty!","error");if(!name||!phone)return toast("Name & phone required","error");if(phone.length<11)return toast("Invalid phone","error");const total=cart.reduce((s,c)=>s+c.price*c.qty,0);const code=genRef();const order={id:Date.now().toString(36)+uid(),referenceCode:code,transactionId:"",amount:total,method:document.querySelector(".pay-method.active")?(document.querySelector(".pay-method.active").textContent.includes("bKash")?"bkash":document.querySelector(".pay-method.active").textContent.includes("Nagad")?"nagad":"rocket"):"bkash",customer:{name,phone,email},items:cart.map(c=>({name:c.name,price:c.price,qty:c.qty})),status:"pending",createdAt:new Date().toISOString(),verifiedAt:null,paymentWindowMinutes:15};const orders=loadOrders();orders.unshift(order);saveOrders(orders);currentRef={code,id:order.id};if(isFbConnected&&fb){try{await fb.collection("payments").doc(order.id).set({...order,createdAt:firebase.firestore.FieldValue.serverTimestamp()})}catch(e){console.error(e)}}$("#order-created").style.display="block";$("#ref-code").textContent=code;$("#ref-time").textContent=nowStr();$("#v-ref").value=code;$("#v-amount").value=total;let pct=100;const bar=$("#ref-progress");const iv=setInterval(()=>{pct-=.11;if(pct<=0){pct=0;clearInterval(iv)}bar.style.width=pct+"%"},1000);updateStats();renderMyOrders();toast("Order Created! Ref: "+code);$("#order-created").scrollIntoView({behavior:"smooth",block:"center"})}
+function copyRef(){if(currentRef)copyText(currentRef.code);else if($("#ref-code").textContent)copyText($("#ref-code").textContent)}
+function pasteRef(){navigator.clipboard.readText().then(t=>{if(t)$("#v-ref").value=t.trim().toUpperCase()})}
+function normalize(s){return(s||"").trim().toUpperCase().replace(/\s+/g,"")}
+async function verifyPayment(){const ref=normalize($("#v-ref").value),trx=normalize($("#v-trx").value),amount=Number($("#v-amount").value||0),method=$("#v-method").value,out=$("#verify-result");if(!ref||!trx){out.innerHTML=`<div class="alert alert-warn">Reference &amp; TrxID both required</div>`;return}if(trx.length<6){out.innerHTML=`<div class="alert alert-warn">TrxID min 6 chars</div>`;return}out.innerHTML=`<div class="alert alert-info">Auto Detect running...</div>`;const orders=loadOrders();const dup=orders.find(o=>normalize(o.transactionId)===trx);if(dup){out.innerHTML=`<div class="alert alert-warn">TrxID already used! Ref: ${dup.referenceCode} (${dup.status})</div>`;return}let order=orders.find(o=>normalize(o.referenceCode)===ref);if(isFbConnected&&fb&&!order){try{const snap=await fb.collection("payments").where("referenceCode","==",ref).limit(1).get();if(!snap.empty){const d=snap.docs[0];order={id:d.id,...d.data()};if(order.createdAt&&order.createdAt.toDate)order.createdAt=order.createdAt.toDate().toISOString()}}catch(e){console.error(e)}}if(!order){out.innerHTML=`<div class="alert alert-warn">Reference not found</div>`;return}const created=new Date(order.createdAt).getTime(),now=Date.now(),windowMs=(order.paymentWindowMinutes||15)*60*1000,expired=(now-created)>windowMs;let amountMismatch=amount&&order.amount&&Number(amount)!==Number(order.amount);order.transactionId=trx;order.method=method;if(amount)order.amount=Number(amount);let autoVerified=false,reason="";if(expired){order.status="pending";reason="15min window expired — admin review"}else if(amountMismatch){order.status="pending";reason="Amount mismatch"}else if(order.status==="verified"){out.innerHTML=`<div class="alert alert-info">Already verified: ${order.transactionId}</div>`;return}else{order.status="verified";order.verifiedAt=new Date().toISOString();autoVerified=true}const idx=orders.findIndex(o=>o.id===order.id);if(idx>-1)orders[idx]=order;else orders.unshift(order);saveOrders(orders);if(isFbConnected&&fb){try{await fb.collection("payments").doc(order.id).set({transactionId:trx,method,amount:order.amount,status:order.status,verifiedAt:order.status==="verified"?firebase.firestore.FieldValue.serverTimestamp():null},{merge:true})}catch(e){console.error(e)}}if(autoVerified){out.innerHTML=`<div class="alert alert-success">Auto Verified! Ref ${ref} + Trx ${trx} matched</div>`}else{out.innerHTML=`<div class="alert alert-warn">Pending: ${reason}</div>`}updateStats();renderMyOrders();renderAdmin();toast(autoVerified?"Verified":"Pending")}
+let trxTimer=null;$("#v-trx").addEventListener("input",()=>{const v=normalize($("#v-trx").value);if(v.length<4)return;clearTimeout(trxTimer);trxTimer=setTimeout(async()=>{const orders=loadOrders(),dup=orders.find(o=>normalize(o.transactionId)===v),box=$("#verify-result");if(dup)box.innerHTML=`<div class="alert alert-warn">TrxID used: ${dup.referenceCode} (${dup.status})</div>`;else if(v.length>=8){box.innerHTML=`<div class="alert alert-info">New TrxID: ${v} — click Verify</div>`;if(isFbConnected&&fb)try{const s=await fb.collection("payments").where("transactionId","==",v).limit(1).get();if(!s.empty)box.innerHTML=`<div class="alert alert-warn">TrxID exists in Firebase!</div>`}catch{}}},400)}
+function renderMyOrders(){const o=loadOrders().slice(0,6),w=$("#my-orders");if(o.length===0){w.innerHTML=`<div class="small" style="text-align:center;padding:20px">No orders yet</div>`;return}w.innerHTML=o.map(x=>`<div style="border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px;background:${x.status==="verified"?"#f0fdf4":"#fff"}"><div class="flex" style="justify-content:space-between"><span class="kbd">${x.referenceCode}</span><span class="status ${x.status==="verified"?"s-verified":x.status==="rejected"?"s-rejected":"s-pending"}">${x.status}</span></div><div class="small" style="margin-top:6px">Trx: <b style="font-family:monospace">${x.transactionId||"—"}</b> | ${fmt(x.amount)} | ${x.method}</div><div class="flex" style="margin-top:6px"><button class="copy" onclick="copyText('${x.referenceCode}')">Copy Ref</button><button class="btn btn-ghost btn-sm" onclick="fillVerify('${x.referenceCode}','${x.transactionId||""}',${x.amount})">Verify</button></div></div>`).join("")}
+function fillVerify(ref,trx,amt){$("#v-ref").value=ref;$("#v-trx").value=trx;$("#v-amount").value=amt;document.querySelector('[data-tab="verify"]').click();window.scrollTo({top:0,behavior:"smooth"})}
+function adminLogin(){if($("#admin-pass").value==="admin123"){localStorage.setItem("paymaster_admin","1");showAdmin(true);toast("Admin OK")}else{$("#admin-login-msg").innerHTML=`<div class="alert alert-warn">Wrong password — default: admin123</div>`}}
+function adminLogout(){localStorage.removeItem("paymaster_admin");showAdmin(false)}
+function showAdmin(l){$("#admin-login").style.display=l?"none":"block";$("#admin-panel").style.display=l?"block":"none";if(l)renderAdmin()}
+function renderAdmin(){if(localStorage.getItem("paymaster_admin")!=="1")return;const orders=loadOrders(),q=normalize($("#admin-search").value),f=$("#admin-filter").value;let filtered=orders.filter(o=>{if(f!=="all"&&o.status!==f)return false;if(!q)return true;return normalize(o.referenceCode).includes(q)||normalize(o.transactionId).includes(q)||(o.customer.phone||"").includes(q)||(o.customer.name||"").toUpperCase().includes(q)});$("#a-total").textContent=orders.length;$("#a-pending").textContent=orders.filter(o=>o.status==="pending").length;$("#a-verified").textContent=orders.filter(o=>o.status==="verified").length;const today=new Date().toDateString(),todaySum=orders.filter(o=>new Date(o.createdAt).toDateString()===today&&o.status==="verified").reduce((s,o)=>s+Number(o.amount||0),0);$("#a-today").textContent=fmt(todaySum);const tb=$("#admin-tbody");if(filtered.length===0){tb.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:18px" class="small">No data</td></tr>`;return}tb.innerHTML=filtered.map(o=>`<tr><td class="small">${new Date(o.createdAt).toLocaleString("bn-BD",{dateStyle:"short",timeStyle:"short"})}</td><td><span class="kbd">${o.referenceCode}</span> <button class="copy" style="padding:2px 6px" onclick="copyText('${o.referenceCode}')">&#9112;</button></td><td style="font-family:monospace">${o.transactionId?`<b>${o.transactionId}</b>`:"—"}</td><td><b>${o.customer.name}</b><br><span class="small">${o.customer.phone}</span></td><td><b>${fmt(o.amount)}</b></td><td><span class="status ${o.method==="bkash"?"s-pending":o.method==="nagad"?"s-verified":"s-checking"}" style="font-size:.7rem">${o.method}</span></td><td><span class="status ${o.status==="verified"?"s-verified":o.status==="rejected"?"s-rejected":"s-pending"}">${o.status}</span></td><td>${o.status!=="verified"?`<button class="btn btn-primary btn-sm" onclick="adminAction('${o.id}','verified')">Approve</button> `:""}${o.status!=="rejected"?`<button class="btn btn-ghost btn-sm" onclick="adminAction('${o.id}','rejected')" style="color:var(--danger)">Reject</button> `:""}<button class="btn btn-ghost btn-sm" onclick="adminDelete('${o.id}')">&#128465;</button></td></tr>`).join("")}
+async function adminAction(id,status){const orders=loadOrders(),o=orders.find(x=>x.id===id);if(!o)return;o.status=status;o.verifiedAt=status==="verified"?new Date().toISOString():null;saveOrders(orders);if(isFbConnected&&fb)try{await fb.collection("payments").doc(id).update({status,verifiedAt:status==="verified"?firebase.firestore.FieldValue.serverTimestamp():null})}catch{}renderAdmin();updateStats();toast(status==="verified"?"Approved":"Rejected")}
+async function adminDelete(id){if(!confirm("Delete?"))return;let orders=loadOrders().filter(o=>o.id!==id);saveOrders(orders);if(isFbConnected&&fb)try{await fb.collection("payments").doc(id).delete()}catch{}renderAdmin();updateStats()}
+function exportCSV(){const orders=loadOrders();let csv="Reference,TrxID,Customer,Phone,Amount,Method,Status,Time\n";orders.forEach(o=>csv+=`"${o.referenceCode}","${o.transactionId}","${o.customer.name}","${o.customer.phone}",${o.amount},${o.method},${o.status},"${o.createdAt}"\n`);const b=new Blob([csv],{type:"text/csv"}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="payments_"+new Date().toISOString().slice(0,10)+".csv";a.click();URL.revokeObjectURL(u)}
+function getFbCfg(){return{apiKey:$("#fb-apiKey").value.trim(),authDomain:$("#fb-authDomain").value.trim(),projectId:$("#fb-projectId").value.trim(),storageBucket:$("#fb-storageBucket").value.trim(),messagingSenderId:$("#fb-senderId").value.trim(),appId:$("#fb-appId").value.trim()}}
+function setFbInputs(c){$("#fb-apiKey").value=c.apiKey||"";$("#fb-authDomain").value=c.authDomain||"";$("#fb-projectId").value=c.projectId||"";$("#fb-storageBucket").value=c.storageBucket||"";$("#fb-senderId").value=c.messagingSenderId||"";$("#fb-appId").value=c.appId||""}
+function connectFirebase(){const c=getFbCfg();if(!c.apiKey||!c.projectId){$("#fb-msg").innerHTML=`<div class="alert alert-warn">apiKey &amp; projectId required</div>`;return}localStorage.setItem(FB_CFG_KEY,JSON.stringify(c));initFirebase(c,true)}
+function disconnectFirebase(){localStorage.removeItem(FB_CFG_KEY);isFbConnected=false;fb=null;$("#fb-badge").textContent="Disconnected";$("#fb-badge").className="status s-pending";$("#h-fb-status").textContent="Local Mode";$("#fb-msg").innerHTML=`<div class="alert alert-info">Disconnected</div>`}
+async function testFirebase(){if(!isFbConnected||!fb){$("#fb-msg").innerHTML=`<div class="alert alert-warn">Connect first</div>`;return}try{await fb.collection("payments").limit(1).get();$("#fb-msg").innerHTML=`<div class="alert alert-success">Connected!</div>`}catch(e){$("#fb-msg").innerHTML=`<div class="alert alert-warn">Error: ${e.message}</div>`}}
+function initFirebase(c,showMsg){try{if(firebase.apps.length===0)firebase.initializeApp(c);fb=firebase.firestore();isFbConnected=true;$("#fb-badge").textContent="Connected";$("#fb-badge").className="status s-verified";$("#h-fb-status").textContent="Firebase ON";$("#h-fb-sub").textContent=c.projectId;if(showMsg)$("#fb-msg").innerHTML=`<div class="alert alert-success">Connected to ${c.projectId}</div>`;try{fb.collection("payments").orderBy("createdAt","desc").limit(50).onSnapshot(snap=>{const a=[];snap.forEach(d=>{const data=d.data();if(data.createdAt&&data.createdAt.toDate)data.createdAt=data.createdAt.toDate().toISOString();a.push({id:d.id,...data})});if(a.length>0){let l=loadOrders();a.forEach(f=>{const i=l.findIndex(x=>x.id===f.id);if(i===-1)l.unshift(f);else if(f.status!==l[i].status)l[i]={...l[i],...f}});l.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));saveOrders(l.slice(0,200));updateStats();renderAdmin();renderMyOrders()}})}catch{}}catch(e){isFbConnected=false;$("#fb-badge").textContent="Error";if(showMsg)$("#fb-msg").innerHTML=`<div class="alert alert-warn">${e.message}</div>`}}
+function updateStats(){const o=loadOrders();$("#h-total").textContent=o.length;$("#h-pending").textContent=o.filter(x=>x.status==="pending").length;$("#h-verified").textContent=o.filter(x=>x.status==="verified").length}
+renderProducts();renderCart();renderMyOrders();updateStats();
+if(localStorage.getItem("paymaster_admin")==="1")showAdmin(true);
+try{const s=JSON.parse(localStorage.getItem(FB_CFG_KEY)||"null");if(s&&s.apiKey){setFbInputs(s);initFirebase(s,false)}}catch{}
+if(loadOrders().length===0){saveOrders([{referenceCode:"REF-20260825-DEMO1",transactionId:"BKA7H2K9P1",amount:850,method:"bkash",customer:{name:"Rahim",phone:"01712345678",email:""},status:"verified",createdAt:new Date(Date.now()-3600000).toISOString(),verifiedAt:new Date().toISOString(),items:[]},{referenceCode:"REF-20260825-DEMO2",transactionId:"",amount:1500,method:"nagad",customer:{name:"Karim",phone:"01887654321",email:""},status:"pending",createdAt:new Date().toISOString(),verifiedAt:null,items:[]}]);updateStats();renderMyOrders()}
+</script>
+</body>
+</html>
